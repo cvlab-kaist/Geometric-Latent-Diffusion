@@ -1,0 +1,1588 @@
+{
+  "meta": {
+    "title": "Repurposing Geometric Foundation Models for Multi-view Diffusion",
+    "template": "minimal",
+    "theme": {
+      "primaryColor": "#dd7f27",
+      "secondaryColor": "#fbf5ef",
+      "accentColor": "#dd7f27",
+      "backgroundColor": "#FFFFFF",
+      "surfaceColor": "#FAFAFA",
+      "textColor": "#27272A",
+      "textSecondaryColor": "#6C757D",
+      "borderColor": "#E4E4E7",
+      "fontFamily": "'Wanted Sans Variable', 'Wanted Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+      "headingFontFamily": "'Wanted Sans Variable', 'Wanted Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+      "monoFontFamily": "'JetBrains Mono', monospace",
+      "baseFontSize": 15,
+      "headingFontSize": 1.6,
+      "bodyLineHeight": 1.8,
+      "borderRadius": 24,
+      "maxWidth": 800,
+      "sectionSpacing": 64,
+      "contentPaddingX": 24,
+      "navStyle": "none",
+      "navTopPreset": "minimal",
+      "navSidePreset": "clean",
+      "navSidePosition": "left",
+      "navSideAlign": "center",
+      "navBackground": "#ffffff",
+      "navTextColor": "#1E293B",
+      "navAccentColor": "#dd7f27",
+      "heroStyle": "flat",
+      "heroBackground": "#FFFFFF",
+      "heroGradientFrom": "#fbf5ef",
+      "heroGradientTo": "#FFFFFF",
+      "heroTitleSize": 2.75,
+      "heroSubtitleSize": 0.9,
+      "headingStyle": "plain",
+      "headingDecoColor": "#dd7f27",
+      "headingDecoWidth": 36,
+      "headingDecoThickness": 3,
+      "shadowStyle": "none",
+      "cardShadow": "none",
+      "cardHoverShadow": "none",
+      "animationStyle": "slide-up",
+      "contentBoxStyle": "plain",
+      "contentBoxRadius": 10,
+      "contentBoxPadding": 0,
+      "tldrStyle": "full-border",
+      "tldrBackground": "#f7f5f3",
+      "tldrBorderColor": "#fbf5ef",
+      "tldrLabelColor": "#52525B",
+      "buttonStyle": "rounded",
+      "buttonBackground": "#f3f2f2",
+      "buttonTextColor": "#212529",
+      "buttonBorderColor": "transparent",
+      "buttonRadius": 50,
+      "buttonHoverEffect": "lift",
+      "authorLinkColor": "#dd7f27",
+      "tableHeaderBg": "#FAFAFA",
+      "tableHeaderColor": "#27272A",
+      "tableBorderColor": "#E4E4E7",
+      "tableHighlightBg": "#FAFAFA",
+      "tableHighlightColor": "#dd7f27",
+      "bibtexStyle": "plain",
+      "bibtexBackground": "#fbf5ef",
+      "bibtexBorderColor": "#7b4b1e",
+      "mediaStyle": "plain",
+      "mediaBorderRadius": 4,
+      "mediaBoxPadding": 0,
+      "captionStyle": "plain",
+      "gridImageFit": "full",
+      "chartLegendSize": 12,
+      "chartLegendStyle": "minimal",
+      "chartLegendMarker": "dot",
+      "chartTickSize": 11,
+      "teaserMaxWidth": 0,
+      "teaserBorderRadius": 9,
+      "compLabelStyle": "minimal",
+      "compLabelABg": "rgba(0,0,0,0.6)",
+      "compLabelAColor": "#fff",
+      "compLabelBBg": "rgba(0,0,0,0.6)",
+      "compLabelBColor": "#fff",
+      "compSliderColor": "#18181B",
+      "sectionDivider": "line",
+      "bulletStyle": "numbered",
+      "showSectionLabel": false,
+      "sectionLabelSize": 0.85,
+      "sectionLabelSpacing": 0.12,
+      "sectionLabelColor": "#4a2d12",
+      "sectionTitleSize": 1.6,
+      "labelTitleGap": 10,
+      "authorLineHeight": 1,
+      "authorGap": 20,
+      "authorAffilGap": 7,
+      "authorFontSize": 0.9,
+      "authorRowGap": 14,
+      "mediaBorderColor": "#fbf5ef",
+      "mediaBorderWidth": 0,
+      "teaserMediaStyle": "bordered",
+      "teaserBorderColor": "#fbf5ef",
+      "teaserBorderWidth": 0,
+      "teaserMediaPadding": 1.5,
+      "teaserCaptionStyle": "plain",
+      "subsectionBorderBottom": false,
+      "calloutStyle": "full-border",
+      "calloutBackground": "#fbf5ef",
+      "calloutBorderColor": "#ebcbad",
+      "calloutIconColor": "#FFFFFF"
+    }
+  },
+  "sections": [
+    {
+      "type": "hero",
+      "visible": true,
+      "content": {
+        "projectTitle": "",
+        "venue": "ARXIV",
+        "venueYear": "2026",
+        "titleLines": [
+          {
+            "text": "Geometric Latent Diffusion: ",
+            "size": 1.1,
+            "highlight": true
+          },
+          {
+            "text": "Repurposing Geometric Foundation Models for Multi-view Diffusion",
+            "size": 1,
+            "highlight": false
+          }
+        ]
+      },
+      "id": "46d46120",
+      "paddingBottom": 0
+    },
+    {
+      "type": "authors",
+      "visible": true,
+      "content": {
+        "authors": [
+          {
+            "name": "Wooseok Jang",
+            "affiliation": "KAIST AI"
+          },
+          {
+            "name": "Seonghu Jeon",
+            "affiliation": "KAIST AI"
+          },
+          {
+            "name": "Jisang Han",
+            "affiliation": "KAIST AI"
+          },
+          {
+            "name": "Jinhyeok Choi",
+            "affiliation": "KAIST AI"
+          },
+          {
+            "name": "Minkyung Kwon",
+            "affiliation": "KAIST AI"
+          },
+          {
+            "name": "Seungryong Kim",
+            "affiliation": "KAIST AI"
+          },
+          {
+            "name": "Saining Xie",
+            "affiliation": "New York University"
+          },
+          {
+            "name": "Sainan Liu",
+            "affiliation": "Intel Labs"
+          }
+        ]
+      },
+      "id": "6b13c4a9",
+      "paddingTop": 7,
+      "paddingBottom": 19
+    },
+    {
+      "type": "links",
+      "visible": true,
+      "content": {
+        "links": [
+          {
+            "label": "Paper",
+            "url": "#",
+            "icon": "paper"
+          },
+          {
+            "label": "arXiv",
+            "url": "#",
+            "icon": "arxiv"
+          }
+        ]
+      },
+      "id": "448e9117",
+      "paddingBottom": 20
+    },
+    {
+      "type": "teaser",
+      "visible": true,
+      "title": "",
+      "content": {
+        "media": [
+          {
+            "type": "image",
+            "src": "assets/img-000.png",
+            "caption": "GLD diffuses in geometric feature space, enabling both RGB and geometry decoding with 4.4× faster convergence.",
+            "alt": "Figure 1 — Comparison of VAE latent diffusion vs Geometric Latent Diffusion (GLD), with training efficiency plot showing 4.4× faster convergence."
+          }
+        ]
+      },
+      "id": "03ebf5d8",
+      "paddingBottom": 0
+    },
+    {
+      "type": "tldr",
+      "visible": true,
+      "title": "TL;DR",
+      "content": {
+        "text": "We propose **Geometric Latent Diffusion (GLD)**, a framework that repurposes the feature space of geometric foundation models (e.g., Depth Anything 3) as the latent space for multi-view diffusion. GLD achieves state-of-the-art novel view synthesis with **4.4× faster training convergence** than VAE-based approaches — all trained from scratch without any text-to-image pretraining."
+      },
+      "id": "071e9da1",
+      "paddingBottom": 0,
+      "paddingTop": 0
+    },
+    {
+      "type": "text",
+      "visible": true,
+      "title": "~#7b4b1e:Geometric Feature Space as Diffusion Latent~",
+      "content": {
+        "bulletItems": [
+          "**Geometry as latent space.** The first framework to repurpose a geometric foundation model's feature space as the diffusion latent space — DA3 features encode both high-fidelity RGB (**35.41 dB** PSNR) and strong cross-view correspondences ($\\text{PCK}=35.98$, surpassing DINOv2's $31.64$).",
+          "**State-of-the-art NVS from scratch.** Outperforms all baselines on in-domain benchmarks (Re10K, DL3DV) in both 2D and 3D metrics, and remains competitive out-of-domain — without any text-to-image pretraining.",
+          "**Zero-shot geometry for free.** Depth maps and 3D point clouds are decoded directly from synthesized latents via the frozen DA3 decoder, with no additional training required."
+        ]
+      },
+      "id": "1c337394",
+      "paddingBottom": 68,
+      "paddingTop": 28,
+      "sectionLabel": ""
+    },
+    {
+      "type": "text",
+      "visible": true,
+      "sectionLabel": "Method",
+      "title": "~#7b4b1e:A Three-Stage Pipeline~\n",
+      "content": {
+        "media": [],
+        "columns": 1,
+        "imageGridRows": 1,
+        "objectFit": "cover",
+        "text": "## Stage 1 — Can DA3 features reconstruct images?\n\nWe first validate that the frozen DA3 encoder's feature space is expressive enough for high-fidelity image generation."
+      },
+      "id": "ca1ff273",
+      "paddingBottom": 8,
+      "paddingTop": 30
+    },
+    {
+      "id": "c66be766",
+      "type": "image-grid",
+      "visible": true,
+      "content": {
+        "columns": 2,
+        "imageGridRows": 1,
+        "media": [
+          {
+            "type": "image",
+            "src": "assets/img-013.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-014.png",
+            "caption": ""
+          }
+        ]
+      },
+      "title": "",
+      "paddingBottom": 0,
+      "paddingTop": 0
+    },
+    {
+      "type": "text",
+      "visible": true,
+      "sectionLabel": "",
+      "title": "",
+      "content": {
+        "text": "",
+        "bulletItems": [
+          "**RGB decoder training.** A ViT-based decoder $D_\\text{rgb}$ is trained to reconstruct RGB images from DA3's multi-level features $\\{F_l\\}$ ($L=4$ levels), extracted by the frozen encoder.",
+          "**Level-wise dropout.** Individual feature levels are randomly masked during training, forcing the decoder to reconstruct from partial inputs and improving robustness.",
+          "**Result: 35.41 dB PSNR** on Re10K (4,000 test samples) — competitive with the Stable Diffusion VAE (34.53 dB) and SDXL VAE (34.97 dB), confirming the feature space is suitable for diffusion."
+        ]
+      },
+      "id": "0a90db0d-s1",
+      "paddingTop": 0,
+      "paddingBottom": 21
+    },
+    {
+      "id": "29197bec",
+      "type": "text",
+      "visible": true,
+      "content": {
+        "text": "## Stage 2 — Optimal boundary layer selection\n\nDiffusing all four feature levels is computationally prohibitive, so we identify an optimal boundary layer k: features up to level k are explicitly synthesized by the diffusion model, while deeper features are deterministically derived by propagating through the frozen DA3 encoder. \n\nAll models adopt the DiT architecture with flow-matching training, 3D self-attention with RoPE for cross-view reasoning, and Plücker ray conditioning to ensure geometric consistency."
+      },
+      "title": "",
+      "paddingBottom": 19,
+      "paddingTop": 0
+    },
+    {
+      "id": "1fe39e0d",
+      "type": "image-grid",
+      "visible": true,
+      "content": {
+        "media": [
+          {
+            "type": "image",
+            "src": "assets/img-015.png",
+            "caption": "",
+            "alt": ""
+          }
+        ],
+        "columns": 1,
+        "imageGridRows": 1
+      },
+      "title": "",
+      "paddingBottom": 24,
+      "paddingTop": 0
+    },
+    {
+      "type": "text",
+      "visible": true,
+      "sectionLabel": "",
+      "title": "",
+      "content": {
+        "text": "## Stage 3 — Cascaded feature generation\n\nWith the boundary set at $k=1$, two multi-view diffusion models generate the explicit feature levels in a cascaded manner.",
+        "bulletItems": [
+          "$\\mathcal{M}_0$ synthesizes level-1 features. $\\mathcal{M}_{1 \\to 0}$ then generates level-0 features conditioned on the synthesized level-1 output, ensuring cross-level alignment.",
+          "**Feature propagation.** Deeper features (levels 2–3) are deterministically derived by passing synthesized level-1 features through the frozen DA3 encoder — no additional diffusion needed.",
+          "**RGB & geometry decoding.** The full multi-level feature set is decoded into target views via $D_\\text{rgb}$, and into depth maps and camera poses via the frozen DA3 geometric decoder $D_\\text{geo}$ — zero-shot, without any fine-tuning."
+        ]
+      },
+      "id": "0a90db0d-s3",
+      "paddingTop": 0,
+      "paddingBottom": 68
+    },
+    {
+      "type": "chart",
+      "visible": true,
+      "sectionLabel": "RESULTS",
+      "title": "~#7b4b1e:Quantitative Results~",
+      "content": {
+        "description": "Each metric is min-max normalized across the five compared methods (worst → 0, best → 100). For lower-is-better metrics, values are inverted so that higher = better on the chart.",
+        "charts": [
+          {
+            "chartType": "radar",
+            "yAxisLabel": "DL3DV",
+            "categories": [
+              "PSNR",
+              "SSIM",
+              "1−LPIPS",
+              "ATE",
+              "RPEr",
+              "RPEt",
+              "Reproj",
+              "MEt3R"
+            ],
+            "datasets": [
+              {
+                "label": "MVGenMaster",
+                "values": [
+                  19.1,
+                  54.4,
+                  40,
+                  76.8,
+                  82.6,
+                  75.9,
+                  74,
+                  100
+                ],
+                "color": "#818fa7"
+              },
+              {
+                "label": "DINO",
+                "values": [
+                  0,
+                  0,
+                  12.5,
+                  10.7,
+                  19.2,
+                  9.6,
+                  0,
+                  0
+                ],
+                "color": "#a8a8a8"
+              },
+              {
+                "label": "VAE",
+                "values": [
+                  32.9,
+                  61.4,
+                  0,
+                  0,
+                  0,
+                  0,
+                  35.4,
+                  8.6
+                ],
+                "color": "#89704d"
+              },
+              {
+                "label": "GLD (DA3)",
+                "values": [
+                  100,
+                  100,
+                  95,
+                  94.8,
+                  94.7,
+                  94.2,
+                  100,
+                  91.4
+                ],
+                "color": "#e9931c"
+              },
+              {
+                "label": "GLD (VGGT)",
+                "values": [
+                  78.4,
+                  40.4,
+                  100,
+                  100,
+                  100,
+                  100,
+                  77.1,
+                  68.6
+                ],
+                "color": "#c75628"
+              }
+            ],
+            "showLegend": true,
+            "legendPosition": "right",
+            "legendStyle": "pill",
+            "legendMarker": "dot",
+            "highlightDataset": 3,
+            "legendCustomX": 3,
+            "legendCustomY": 45
+          },
+          {
+            "chartType": "radar",
+            "yAxisLabel": "RealEstate10K",
+            "categories": [
+              "PSNR",
+              "SSIM",
+              "1−LPIPS",
+              "ATE",
+              "RPEr",
+              "RPEt",
+              "Reproj",
+              "MEt3R"
+            ],
+            "datasets": [
+              {
+                "label": "MVGenMaster",
+                "values": [
+                  0,
+                  0,
+                  0,
+                  47,
+                  100,
+                  69.2,
+                  100,
+                  64.3
+                ],
+                "color": "#818fa7"
+              },
+              {
+                "label": "DINO",
+                "values": [
+                  36.3,
+                  31,
+                  29.6,
+                  0,
+                  0,
+                  0,
+                  0,
+                  100
+                ],
+                "color": "#a8a8a8"
+              },
+              {
+                "label": "VAE",
+                "values": [
+                  37.4,
+                  42.9,
+                  0,
+                  50,
+                  75.4,
+                  59.9,
+                  70.2,
+                  0
+                ],
+                "color": "#89704d"
+              },
+              {
+                "label": "GLD (DA3)",
+                "values": [
+                  100,
+                  100,
+                  92.6,
+                  100,
+                  92.9,
+                  98.6,
+                  84.2,
+                  83.9
+                ],
+                "color": "#e9931c"
+              },
+              {
+                "label": "GLD (VGGT)",
+                "values": [
+                  83.2,
+                  19,
+                  100,
+                  96.3,
+                  91.8,
+                  100,
+                  96.5,
+                  89.3
+                ],
+                "color": "#c75628"
+              }
+            ],
+            "showLegend": true,
+            "legendPosition": "right",
+            "legendStyle": "pill",
+            "legendMarker": "dot",
+            "highlightDataset": 3,
+            "legendCustomX": 3,
+            "legendCustomY": 45
+          },
+          {
+            "chartType": "radar",
+            "yAxisLabel": "Mip-NeRF 360 (OOD)",
+            "categories": [
+              "PSNR",
+              "SSIM",
+              "1−LPIPS",
+              "ATE",
+              "RPEr",
+              "RPEt",
+              "Reproj",
+              "MEt3R"
+            ],
+            "datasets": [
+              {
+                "label": "MVGenMaster",
+                "values": [
+                  61.7,
+                  100,
+                  84.1,
+                  100,
+                  100,
+                  100,
+                  40.3,
+                  85.5
+                ],
+                "color": "#818fa7"
+              },
+              {
+                "label": "DINO",
+                "values": [
+                  15.2,
+                  5.1,
+                  13.6,
+                  30.2,
+                  31.8,
+                  29.8,
+                  0,
+                  9.1
+                ],
+                "color": "#a8a8a8"
+              },
+              {
+                "label": "VAE",
+                "values": [
+                  38.3,
+                  23.1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  42.9,
+                  0
+                ],
+                "color": "#89704d"
+              },
+              {
+                "label": "GLD (DA3)",
+                "values": [
+                  100,
+                  59,
+                  100,
+                  70.1,
+                  79.3,
+                  70,
+                  100,
+                  78.2
+                ],
+                "color": "#e9931c"
+              },
+              {
+                "label": "GLD (VGGT)",
+                "values": [
+                  0,
+                  0,
+                  43.2,
+                  69.4,
+                  76.8,
+                  62.6,
+                  68.8,
+                  100
+                ],
+                "color": "#c75628"
+              }
+            ],
+            "showLegend": true,
+            "legendPosition": "right",
+            "legendStyle": "pill",
+            "legendMarker": "dot",
+            "highlightDataset": 3,
+            "legendCustomX": 3,
+            "legendCustomY": 45
+          }
+        ],
+        "columns": 1,
+        "chart": {
+          "chartType": "radar",
+          "yAxisLabel": "DL3DV",
+          "categories": [
+            "PSNR",
+            "SSIM",
+            "1−LPIPS",
+            "ATE",
+            "RPEr",
+            "RPEt",
+            "Reproj",
+            "MEt3R"
+          ],
+          "datasets": [
+            {
+              "label": "MVGenMaster",
+              "values": [
+                19.1,
+                54.4,
+                40,
+                76.8,
+                82.6,
+                75.9,
+                74,
+                100
+              ],
+              "color": "#818fa7"
+            },
+            {
+              "label": "DINO",
+              "values": [
+                0,
+                0,
+                12.5,
+                10.7,
+                19.2,
+                9.6,
+                0,
+                0
+              ],
+              "color": "#a8a8a8"
+            },
+            {
+              "label": "VAE",
+              "values": [
+                32.9,
+                61.4,
+                0,
+                0,
+                0,
+                0,
+                35.4,
+                8.6
+              ],
+              "color": "#89704d"
+            },
+            {
+              "label": "GLD (DA3)",
+              "values": [
+                100,
+                100,
+                95,
+                94.8,
+                94.7,
+                94.2,
+                100,
+                91.4
+              ],
+              "color": "#e9931c"
+            },
+            {
+              "label": "GLD (VGGT)",
+              "values": [
+                78.4,
+                40.4,
+                100,
+                100,
+                100,
+                100,
+                77.1,
+                68.6
+              ],
+              "color": "#c75628"
+            }
+          ],
+          "showLegend": true,
+          "legendPosition": "right",
+          "legendStyle": "pill",
+          "legendMarker": "dot",
+          "highlightDataset": 3,
+          "legendCustomX": 3,
+          "legendCustomY": 45
+        }
+      },
+      "id": "7b4b30bc",
+      "paddingBottom": 0,
+      "paddingTop": 0
+    },
+    {
+      "type": "results-table",
+      "visible": true,
+      "sectionLabel": "",
+      "title": "",
+      "content": {
+        "tableStyle": "striped",
+        "tableDensity": "compact",
+        "tableAlign": "center",
+        "tables": [
+          {
+            "label": "DL3DV",
+            "headers": [
+              "Method",
+              "Scratch",
+              "PSNR ↑",
+              "SSIM ↑",
+              "LPIPS ↓",
+              "ATE ↓",
+              "RPEr ↓",
+              "RPEt ↓",
+              "Reproj ↓",
+              "MEt3R ↓"
+            ],
+            "rows": [
+              {
+                "cells": [
+                  "MVGenMaster",
+                  "✗",
+                  "14.565",
+                  "__0.442__",
+                  "0.460",
+                  "0.281",
+                  "6.93",
+                  "0.592",
+                  "0.637",
+                  "**0.375**"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "Matrix3D",
+                  "✗",
+                  "13.330",
+                  "0.396",
+                  "0.451",
+                  "0.459",
+                  "9.65",
+                  "0.850",
+                  "0.667",
+                  "0.394"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "CAMEO",
+                  "✗",
+                  "12.320",
+                  "0.371",
+                  "0.567",
+                  "1.143",
+                  "24.76",
+                  "2.149",
+                  "0.706",
+                  "0.404"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "NVComposer",
+                  "✗",
+                  "10.518",
+                  "0.273",
+                  "0.646",
+                  "1.810",
+                  "55.59",
+                  "3.098",
+                  "0.852",
+                  "0.517"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "CAT3D†",
+                  "✗",
+                  "11.820",
+                  "0.335",
+                  "0.594",
+                  "1.346",
+                  "31.73",
+                  "2.473",
+                  "0.746",
+                  "0.435"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "DINO",
+                  "✓",
+                  "14.345",
+                  "0.411",
+                  "0.471",
+                  "0.546",
+                  "13.12",
+                  "1.050",
+                  "0.708",
+                  "0.410"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "VAE",
+                  "✓",
+                  "14.725",
+                  "0.446",
+                  "0.476",
+                  "0.589",
+                  "15.00",
+                  "1.116",
+                  "0.674",
+                  "0.407"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "**GLD (DA3)**",
+                  "✓",
+                  "**15.499**",
+                  "**0.468**",
+                  "__0.438__",
+                  "__0.209__",
+                  "__5.75__",
+                  "__0.466__",
+                  "**0.612**",
+                  "__0.378__"
+                ],
+                "highlight": true
+              },
+              {
+                "cells": [
+                  "**GLD (VGGT)**",
+                  "✓",
+                  "__15.25__",
+                  "0.434",
+                  "**0.436**",
+                  "**0.188**",
+                  "**5.23**",
+                  "**0.426**",
+                  "__0.634__",
+                  "0.386"
+                ],
+                "highlight": true
+              }
+            ]
+          },
+          {
+            "label": "RealEstate10K",
+            "headers": [
+              "Method",
+              "Scratch",
+              "PSNR ↑",
+              "SSIM ↑",
+              "LPIPS ↓",
+              "ATE ↓",
+              "RPEr ↓",
+              "RPEt ↓",
+              "Reproj ↓",
+              "MEt3R ↓"
+            ],
+            "rows": [
+              {
+                "cells": [
+                  "MVGenMaster",
+                  "✗",
+                  "15.226",
+                  "0.588",
+                  "0.456",
+                  "0.282",
+                  "**6.42**",
+                  "0.526",
+                  "__0.664__",
+                  "0.339"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "Matrix3D",
+                  "✗",
+                  "14.490",
+                  "0.580",
+                  "0.448",
+                  "0.413",
+                  "8.93",
+                  "0.638",
+                  "0.666",
+                  "0.344"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "CAMEO",
+                  "✗",
+                  "13.800",
+                  "0.561",
+                  "0.522",
+                  "0.446",
+                  "12.93",
+                  "0.790",
+                  "0.661",
+                  "0.344"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "NVComposer",
+                  "✗",
+                  "11.140",
+                  "0.418",
+                  "0.649",
+                  "0.829",
+                  "42.85",
+                  "1.435",
+                  "0.860",
+                  "0.457"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "CAT3D†",
+                  "✗",
+                  "13.350",
+                  "0.527",
+                  "0.561",
+                  "0.496",
+                  "17.49",
+                  "0.941",
+                  "0.719",
+                  "0.361"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "DINO",
+                  "✓",
+                  "__15.638__",
+                  "0.601",
+                  "__0.448__",
+                  "0.345",
+                  "15.59",
+                  "0.719",
+                  "0.721",
+                  "**0.319**"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "VAE",
+                  "✓",
+                  "15.65",
+                  "__0.606__",
+                  "0.456",
+                  "0.278",
+                  "8.68",
+                  "0.552",
+                  "0.681",
+                  "0.375"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "**GLD (DA3)**",
+                  "✓",
+                  "**16.36**",
+                  "**0.630**",
+                  "__0.431__",
+                  "**0.211**",
+                  "__7.07__",
+                  "**0.444**",
+                  "**0.673**",
+                  "0.328"
+                ],
+                "highlight": true
+              },
+              {
+                "cells": [
+                  "**GLD (VGGT)**",
+                  "✓",
+                  "16.17",
+                  "0.596",
+                  "**0.429**",
+                  "__0.216__",
+                  "7.17",
+                  "__0.440__",
+                  "0.666",
+                  "__0.325__"
+                ],
+                "highlight": true
+              }
+            ]
+          },
+          {
+            "label": "Mip-NeRF 360 (OOD)",
+            "headers": [
+              "Method",
+              "Scratch",
+              "PSNR ↑",
+              "SSIM ↑",
+              "LPIPS ↓",
+              "ATE ↓",
+              "RPEr ↓",
+              "RPEt ↓",
+              "Reproj ↓",
+              "MEt3R ↓"
+            ],
+            "rows": [
+              {
+                "cells": [
+                  "MVGenMaster",
+                  "✗",
+                  "__14.170__",
+                  "**0.304**",
+                  "0.511",
+                  "**0.320**",
+                  "**10.92**",
+                  "**0.587**",
+                  "0.676",
+                  "0.402"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "Matrix3D",
+                  "✗",
+                  "13.970",
+                  "0.284",
+                  "**0.483**",
+                  "0.548",
+                  "__13.63__",
+                  "__0.948__",
+                  "__0.646__",
+                  "0.422"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "CAMEO",
+                  "✗",
+                  "11.900",
+                  "0.250",
+                  "0.629",
+                  "1.623",
+                  "48.75",
+                  "3.008",
+                  "0.684",
+                  "__0.395__"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "NVComposer",
+                  "✗",
+                  "12.525",
+                  "0.217",
+                  "0.637",
+                  "1.622",
+                  "54.26",
+                  "2.703",
+                  "0.767",
+                  "0.526"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "CAT3D†",
+                  "✗",
+                  "11.310",
+                  "0.214",
+                  "0.653",
+                  "1.722",
+                  "54.65",
+                  "3.171",
+                  "0.724",
+                  "0.453"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "DINO",
+                  "✓",
+                  "13.718",
+                  "0.267",
+                  "0.542",
+                  "0.949",
+                  "27.57",
+                  "1.720",
+                  "0.707",
+                  "0.444"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "VAE",
+                  "✓",
+                  "13.942",
+                  "0.274",
+                  "0.548",
+                  "1.221",
+                  "35.34",
+                  "2.200",
+                  "0.674",
+                  "0.449"
+                ],
+                "highlight": false
+              },
+              {
+                "cells": [
+                  "**GLD (DA3)**",
+                  "✓",
+                  "**14.542**",
+                  "__0.288__",
+                  "__0.504__",
+                  "**0.589**",
+                  "15.97",
+                  "1.071",
+                  "**0.630**",
+                  "0.406"
+                ],
+                "highlight": true
+              },
+              {
+                "cells": [
+                  "**GLD (VGGT)**",
+                  "✓",
+                  "13.57",
+                  "0.265",
+                  "0.529",
+                  "0.596",
+                  "16.58",
+                  "1.190",
+                  "0.654",
+                  "**0.394**"
+                ],
+                "highlight": true
+              }
+            ]
+          }
+        ],
+        "headers": [
+          "Method",
+          "Scratch",
+          "PSNR ↑",
+          "SSIM ↑",
+          "LPIPS ↓",
+          "ATE ↓",
+          "RPEr ↓",
+          "RPEt ↓",
+          "Reproj ↓",
+          "MEt3R ↓"
+        ],
+        "rows": [
+          {
+            "cells": [
+              "MVGenMaster",
+              "✗",
+              "15.226",
+              "0.588",
+              "0.456",
+              "0.282",
+              "**6.42**",
+              "0.526",
+              "__0.664__",
+              "0.339"
+            ],
+            "highlight": false
+          },
+          {
+            "cells": [
+              "Matrix3D",
+              "✗",
+              "14.490",
+              "0.580",
+              "0.448",
+              "0.413",
+              "8.93",
+              "0.638",
+              "0.666",
+              "0.344"
+            ],
+            "highlight": false
+          },
+          {
+            "cells": [
+              "CAMEO",
+              "✗",
+              "13.800",
+              "0.561",
+              "0.522",
+              "0.446",
+              "12.93",
+              "0.790",
+              "0.661",
+              "0.344"
+            ],
+            "highlight": false
+          },
+          {
+            "cells": [
+              "NVComposer",
+              "✗",
+              "11.140",
+              "0.418",
+              "0.649",
+              "0.829",
+              "42.85",
+              "1.435",
+              "0.860",
+              "0.457"
+            ],
+            "highlight": false
+          },
+          {
+            "cells": [
+              "CAT3D†",
+              "✗",
+              "13.350",
+              "0.527",
+              "0.561",
+              "0.496",
+              "17.49",
+              "0.941",
+              "0.719",
+              "0.361"
+            ],
+            "highlight": false
+          },
+          {
+            "cells": [
+              "DINO",
+              "✓",
+              "__15.638__",
+              "0.601",
+              "__0.448__",
+              "0.345",
+              "15.59",
+              "0.719",
+              "0.721",
+              "**0.319**"
+            ],
+            "highlight": false
+          },
+          {
+            "cells": [
+              "VAE",
+              "✓",
+              "15.65",
+              "__0.606__",
+              "0.456",
+              "0.278",
+              "8.68",
+              "0.552",
+              "0.681",
+              "0.375"
+            ],
+            "highlight": false
+          },
+          {
+            "cells": [
+              "**GLD (DA3)**",
+              "✓",
+              "**16.36**",
+              "**0.630**",
+              "__0.431__",
+              "**0.211**",
+              "__7.07__",
+              "**0.444**",
+              "**0.673**",
+              "0.328"
+            ],
+            "highlight": true
+          },
+          {
+            "cells": [
+              "**GLD (VGGT)**",
+              "✓",
+              "16.17",
+              "0.596",
+              "**0.429**",
+              "__0.216__",
+              "7.17",
+              "__0.440__",
+              "0.666",
+              "__0.325__"
+            ],
+            "highlight": true
+          }
+        ]
+      },
+      "id": "c3f5295d",
+      "paddingTop": 28,
+      "paddingBottom": 25
+    },
+    {
+      "type": "image-grid",
+      "visible": true,
+      "sectionLabel": "RESULTS",
+      "title": "~#7b4b1e:Qualitative Results~",
+      "content": {
+        "columns": 2,
+        "imageGridRows": 6,
+        "media": [
+          {
+            "type": "image",
+            "src": "assets/img-030.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-031.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-001.png",
+            "caption": "",
+            "alt": "Figure 4 — Qualitative comparison on RealEstate10K."
+          },
+          {
+            "type": "image",
+            "src": "assets/img-002.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-003.png",
+            "caption": "",
+            "alt": "Figure 4 — Qualitative comparison on Mip-NeRF 360."
+          },
+          {
+            "type": "image",
+            "src": "assets/img-004.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-005.png",
+            "caption": "",
+            "alt": "Figure 4 — Qualitative comparison on DL3DV."
+          },
+          {
+            "type": "image",
+            "src": "assets/img-006.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-007.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-008.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-032.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-033.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-019.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-025.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-026.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-027.png",
+            "caption": "",
+            "alt": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-021.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-028.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-022.png",
+            "caption": "",
+            "alt": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-029.png",
+            "caption": ""
+          }
+        ],
+        "gridColumnGap": 14,
+        "gridRowGap": 9
+      },
+      "id": "13e50afd",
+      "paddingBottom": 38,
+      "paddingTop": 17
+    },
+    {
+      "type": "callout",
+      "visible": true,
+      "sectionLabel": "",
+      "title": "~#7b4b1e:3D Reconstruction~",
+      "content": {
+        "text": "Depth maps and 3D point clouds are decoded directly from synthesized latents via the **frozen DA3 geometric decoder** $D_\\text{geo}$ without any additional training or fine-tuning.",
+        "calloutIcon": "💡"
+      },
+      "id": "callout-method-takeaway",
+      "paddingTop": 0,
+      "paddingBottom": 24
+    },
+    {
+      "id": "f6267fa7",
+      "type": "image-grid",
+      "visible": true,
+      "content": {
+        "columns": 2,
+        "imageGridRows": 2,
+        "media": [
+          {
+            "type": "image",
+            "src": "assets/img-009.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-010.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-011.png",
+            "caption": ""
+          },
+          {
+            "type": "image",
+            "src": "assets/img-012.png",
+            "caption": ""
+          }
+        ],
+        "gridColumnGap": 0,
+        "gridRowGap": 0
+      },
+      "title": "",
+      "paddingTop": 3,
+      "paddingBottom": 0,
+      "sectionLabel": "RESULTS"
+    },
+    {
+      "id": "25bd4e70",
+      "type": "image-grid",
+      "visible": true,
+      "content": {
+        "columns": 1,
+        "imageGridRows": 1,
+        "media": [
+          {
+            "type": "image",
+            "src": "assets/img-023.png",
+            "caption": ""
+          }
+        ]
+      },
+      "title": "",
+      "paddingTop": 9,
+      "paddingBottom": 44
+    },
+    {
+      "type": "abstract",
+      "visible": true,
+      "sectionLabel": "ABSTRACT",
+      "title": "",
+      "content": {
+        "text": "The latent space of diffusion models fundamentally determines their learning efficiency and generation quality. While recent advances in the latent space have driven substantial progress in single-image generation, the optimal latent space for novel view synthesis (NVS) remains largely unexplored. In particular, NVS requires geometrically consistent generation across viewpoints, but existing approaches typically operate in a view-independent latent space. In this paper, we propose **Geometric Latent Diffusion (GLD)**, a framework that repurposes the feature space of a geometric foundation model as the latent space for multi-view diffusion. We show that the features of the geometric foundation model not only support high-fidelity RGB reconstruction but also encode strong cross-view geometric correspondences, providing a well-suited latent space for NVS. Through experiments, **GLD** outperforms both VAE and RAE on 2D image quality and 3D consistency metrics, accelerating training by more than $\\mathbf{4.4\\times}$ compared to the VAE latent space. Notably, {GLD} remains competitive with state-of-the-art methods that leverage large-scale text-to-image pretraining, despite training its diffusion model from scratch without such generative pretraining."
+      },
+      "id": "993517d2",
+      "contentBg": "#fffdfa",
+      "paddingTop": 7,
+      "contentBgPadding": 32,
+      "contentBgRadius": 20
+    },
+    {
+      "type": "bibtex",
+      "visible": true,
+      "sectionLabel": "CITATION",
+      "content": {
+        "bibtex": "@article{jang2026repurposing,\n  title={Repurposing Geometric Foundation Models for Multi-view Diffusion},\n  author={Wooseok Jang and Seonghu Jeon and Jisang Han and Jinhyeok Choi and Minkyung Kwon and Seungryong Kim and Saining Xie and Sainan Liu},\n  journal={arXiv preprint arXiv},\n  year={2026}\n}"
+      },
+      "id": "40be3ff0"
+    },
+    {
+      "id": "404ef659",
+      "type": "nav-sidebar",
+      "visible": true,
+      "content": {
+        "navAutoFromSections": true,
+        "navItems": [],
+        "navBackground": "transparent",
+        "navTextColor": "#64748b",
+        "navAccentColor": "",
+        "navSticky": true,
+        "navShowDots": true,
+        "navShowLabels": true,
+        "navLogo": ""
+      },
+      "title": "Sidebar Navigation"
+    }
+  ]
+}
