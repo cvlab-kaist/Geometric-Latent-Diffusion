@@ -1136,7 +1136,13 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
 .topbar-group-gh .topbar-btn-save:hover { background: rgb(33, 136, 56); }
 .topbar-group-gh .topbar-btn-saveas { border-left: 1px solid rgba(255, 255, 255, 0.3); background: rgb(45, 164, 78); color: rgb(255, 255, 255); padding: 6px; min-width: 0px; }
 .topbar-group-gh .topbar-btn-saveas:hover { background: rgb(33, 136, 56); }
-.topbar-repo-label { font-size: 11px; color: rgb(136, 136, 136); font-family: "JetBrains Mono", monospace; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-repo-label { font-size: 11px; color: rgb(136, 136, 136); font-family: "JetBrains Mono", monospace; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-group-ext { display: flex; align-items: center; gap: 4px; background: rgb(246, 248, 250); border: 1px solid rgb(208, 215, 222); border-radius: 8px; padding: 0px 4px 0px 8px; overflow: hidden; }
+.topbar-group-ext .topbar-repo-label { max-width: 140px; }
+.topbar-group-ext .topbar-btn-gh { border: none; border-radius: 4px; background: transparent; font-weight: 600; font-size: 11px; padding: 4px 8px; gap: 4px; color: rgb(36, 41, 47); }
+.topbar-group-ext .topbar-btn-gh:hover { background: rgb(235, 238, 241); }
+.topbar-group-ext .topbar-btn-save { background: rgb(45, 164, 78); color: rgb(255, 255, 255); border-radius: 4px; }
+.topbar-group-ext .topbar-btn-save:hover { background: rgb(33, 136, 56); }
 .topbar-btn-github { gap: 6px; background: rgb(36, 41, 46) !important; color: rgb(255, 255, 255) !important; border: none !important; font-weight: 600 !important; }
 .topbar-btn-github:hover { background: rgb(27, 31, 35) !important; }
 .topbar-btn-ai { background: linear-gradient(135deg, rgb(245, 243, 255), rgb(237, 233, 254)) !important; border-color: rgb(196, 181, 253) !important; color: rgb(109, 40, 217) !important; font-weight: 600 !important; }

@@ -140,35 +140,43 @@
         "authors": [
           {
             "name": "Wooseok Jang",
-            "affiliation": "KAIST AI"
+            "affiliation": "KAIST AI",
+            "url": "https://scholar.google.com/citations?hl=ko&user=7cyLEQ0AAAAJ"
           },
           {
             "name": "Seonghu Jeon",
-            "affiliation": "KAIST AI"
+            "affiliation": "KAIST AI",
+            "url": "https://jeonseonghu.github.io/about-me"
           },
           {
             "name": "Jisang Han",
-            "affiliation": "KAIST AI"
+            "affiliation": "KAIST AI",
+            "url": "https://onground-korea.github.io/"
           },
           {
             "name": "Jinhyeok Choi",
-            "affiliation": "KAIST AI"
+            "affiliation": "KAIST AI",
+            "url": "https://wlsguur.github.io/"
           },
           {
             "name": "Minkyung Kwon",
-            "affiliation": "KAIST AI"
+            "affiliation": "KAIST AI",
+            "url": "https://mkxdxdxd.github.io/"
           },
           {
             "name": "Seungryong Kim",
-            "affiliation": "KAIST AI"
+            "affiliation": "KAIST AI",
+            "url": "https://scholar.google.com/citations?user=cIK1hS8AAAAJ"
           },
           {
             "name": "Saining Xie",
-            "affiliation": "New York University"
+            "affiliation": "New York University",
+            "url": "https://www.sainingxie.com/"
           },
           {
             "name": "Sainan Liu",
-            "affiliation": "Intel Labs"
+            "affiliation": "Intel Labs",
+            "url": "https://www.sainanliu.com/"
           }
         ]
       },
