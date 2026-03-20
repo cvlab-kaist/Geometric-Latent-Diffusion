@@ -464,6 +464,13 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
 .fde-hl-btn.active { color: rgb(234, 179, 8); }
 .fde-del-btn { background: none; border: none; cursor: pointer; font-size: 14px; color: rgb(209, 213, 219); transition: color 0.15s; }
 .fde-del-btn:hover { color: rgb(239, 68, 68); }
+.fde-move-btn { background: none; border: none; cursor: pointer; font-size: 13px; color: rgb(156, 163, 175); transition: color 0.15s; padding: 0px 2px; line-height: 1; }
+.fde-move-btn:hover:not(:disabled) { color: rgb(99, 102, 241); }
+.fde-move-btn:disabled { opacity: 0.2; cursor: default; }
+.fde-col-header { display: flex; align-items: center; gap: 0px; }
+.fde-col-header .fde-grid-header-input { flex: 1 1 0%; min-width: 0px; }
+.fde-col-move { width: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.fde-col-move .fde-move-btn { font-size: 16px; font-weight: 700; }
 .fde-add-btn { background: none; border: 1px dashed rgb(209, 213, 219); border-radius: 6px; padding: 5px 12px; font-size: 12px; color: rgb(99, 102, 241); cursor: pointer; transition: 0.15s; }
 .fde-add-btn:hover { background: rgb(238, 242, 255); border-color: rgb(99, 102, 241); }
 .fde-remove-btn { background: none; border: 1px solid rgb(254, 202, 202); border-radius: 6px; padding: 5px 12px; font-size: 12px; color: rgb(239, 68, 68); cursor: pointer; transition: 0.15s; }
