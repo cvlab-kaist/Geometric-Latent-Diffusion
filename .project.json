@@ -198,6 +198,11 @@
             "label": "arXiv",
             "url": "#",
             "icon": "arxiv"
+          },
+          {
+            "label": "Code",
+            "url": "https://github.com/cvlab-kaist/GLD/tree/project-page",
+            "icon": "code"
           }
         ]
       },
