@@ -1576,7 +1576,7 @@
       "visible": true,
       "sectionLabel": "CITATION",
       "content": {
-        "bibtex": "@article{jang2026repurposing,\n  title={Repurposing Geometric Foundation Models for Multi-view Diffusion},\n  author={Wooseok Jang and Seonghu Jeon and Jisang Han and Jinhyeok Choi and Minkyung Kwon and Seungryong Kim and Saining Xie and Sainan Liu},\n  journal={arXiv preprint arXiv},\n  year={2026}\n}"
+        "bibtex": "@article{jang2026repurposing,\n  title={Repurposing Geometric Foundation Models for Multi-view Diffusion},\n  author={Wooseok Jang and Seonghu Jeon and Jisang Han and Jinhyeok Choi and Minkyung Kwon and Seungryong Kim and Saining Xie and Sainan Liu},\n  journal={arXiv preprint arXiv:2603.22275},\n  year={2026}\n}"
       },
       "id": "40be3ff0"
     },

@@ -1379,10 +1379,11 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
   .preview-scroll { padding: 8px; }
 }
 @media (max-width: 768px) {
+  .preview-outer { font-size: calc(var(--font-size, 16px) * .95) !important; }
   .content-container { padding-left: 20px !important; padding-right: 20px !important; }
   .sec-hero { padding-left: 20px; padding-right: 20px; }
-  .hero-title { font-size: clamp(1.5rem, 5vw, 2.4rem) !important; line-height: 1.25 !important; }
-  .hero-subtitle { font-size: clamp(0.9rem, 2.5vw, 1.15rem) !important; max-width: 100%; }
+  .hero-title { letter-spacing: -0.01em; font-size: clamp(1.5rem, 5vw, 2.4rem) !important; line-height: 1.25 !important; }
+  .hero-subtitle { max-width: 100%; line-height: 1.55; font-size: clamp(0.9rem, 2.5vw, 1.15rem) !important; }
   .hero-media { max-width: 100%; }
   .venue-badge { font-size: 0.8em; }
   .sec-authors { padding-left: 16px !important; padding-right: 16px !important; }
@@ -1419,21 +1420,29 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
   .hero-teaser { max-width: 100% !important; }
   .sec { padding-top: calc(var(--sec-pt, var(--section-spacing, 48px)) * .7); padding-bottom: calc(var(--sec-pb, var(--section-spacing, 48px)) * .7); }
   .section-heading { font-size: clamp(1.1rem,3.5vw,var(--heading-font-size, 1.5rem)) !important; }
+  .section-label-tag { font-size: 0.6rem; letter-spacing: 0.08em; }
   .md-subsection { font-size: 1.1em; }
   .md-subsubsection { font-size: 1em; }
+  .sec p, .sec li { line-height: 1.6; }
+  .divider-dots { letter-spacing: 8px; font-size: 16px; }
+  [data-section-divider="dots"] .sec + .sec::before { letter-spacing: 4px; font-size: 18px; }
   .math-display { overflow-x: auto; }
+  .bullet-list { gap: 10px; }
+  .bullet-item p { font-size: 0.9em; }
 }
 @media (max-width: 480px) {
+  .preview-outer { font-size: calc(var(--font-size, 16px) * .9) !important; }
   .content-container { padding-left: 12px !important; padding-right: 12px !important; }
   .sec-hero { padding: 32px 12px 24px !important; }
-  .hero-title { font-size: clamp(1.3rem, 6vw, 1.8rem) !important; }
-  .hero-subtitle { font-size: 0.85rem !important; }
+  .hero-title { letter-spacing: -0.01em; font-size: clamp(1.3rem, 6vw, 1.8rem) !important; line-height: 1.3 !important; }
+  .hero-subtitle { font-size: 0.85rem !important; line-height: 1.5; }
   .hero-venue { margin-bottom: 10px; }
-  .venue-badge { font-size: 0.72em; padding: 4px 10px; }
+  .venue-badge { font-size: 0.72em; padding: 4px 10px; letter-spacing: 0.03em; }
   .sec-authors { padding-left: 12px !important; padding-right: 12px !important; }
   .author-list { flex-direction: column !important; gap: 12px !important; }
   .author-card { flex-direction: row; gap: 6px; }
   .author-name { font-size: 0.85em; }
+  .author-affil { font-size: 0.65em; }
   .links-row { gap: 6px; }
   .link-btn { font-size: 11px; padding: 6px 10px; gap: 4px; }
   .image-grid { grid-template-columns: 1fr !important; }
@@ -1445,17 +1454,28 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
   .nav-top-link { white-space: nowrap; font-size: 11px; }
   .comparison-container { flex-direction: column; gap: 8px; }
   .section-heading { font-size: clamp(1rem, 4vw, 1.3rem) !important; }
-  .section-label-tag { font-size: 0.65rem; }
+  .section-label-tag { font-size: 0.55rem; letter-spacing: 0.06em; }
+  .sec p, .sec li { line-height: 1.55; }
+  .bullet-item p { font-size: 0.88em; }
+  .divider-dots { letter-spacing: 6px; font-size: 14px; }
+  [data-section-divider="dots"] .sec + .sec::before { letter-spacing: 3px; font-size: 16px; }
   .content-bg-box { border-radius: 8px !important; }
   .floating-md-editor { width: calc(-24px + 100vw) !important; left: 12px !important; }
 }
 @media (max-width: 360px) {
+  .preview-outer { font-size: calc(var(--font-size, 16px) * .85) !important; }
   .content-container { padding-left: 8px !important; padding-right: 8px !important; }
   .sec-hero { padding: 24px 8px 20px !important; }
   .hero-title { font-size: 1.2rem !important; }
+  .hero-subtitle { font-size: 0.8rem !important; }
+  .venue-badge { font-size: 0.65em; }
   .link-btn { font-size: 10px; padding: 5px 8px; }
+  .author-name { font-size: 0.8em; }
+  .author-affil { font-size: 0.6em; }
   .chart-legend { display: none; }
   .bibtex-code { font-size: 0.65em; }
+  .section-heading { font-size: clamp(0.95rem, 4.5vw, 1.2rem) !important; }
+  .divider-dots { letter-spacing: 4px; font-size: 12px; }
 }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border: 0px; }
 :focus-visible { outline: 2px solid var(--app-accent); outline-offset: 2px; }
@@ -1498,4 +1518,4 @@ body { height: auto; overflow-y: auto; overflow-x: hidden; margin: 0; padding: 0
 }
 .preview-section-wrapper { outline: none !important; cursor: default; }
 .preview-section-wrapper.selected, .preview-section-wrapper:hover { outline: none !important; background: transparent !important; }
-.pv-controls, .pv-add-btn, .pv-add-menu, .deploy-backdrop, .deploy-modal, .asset-tray { display: none !important; }
+.pv-controls, .pv-add-btn, .pv-add-menu, .deploy-backdrop, .deploy-modal, .asset-tray, .spacing-handle { display: none !important; }
