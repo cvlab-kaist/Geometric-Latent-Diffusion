@@ -249,7 +249,7 @@
         ]
       },
       "id": "1c337394",
-      "paddingBottom": 68,
+      "paddingBottom": 47,
       "paddingTop": 28,
       "sectionLabel": ""
     },
@@ -1369,7 +1369,7 @@
     {
       "type": "image-grid",
       "visible": true,
-      "sectionLabel": "RESULTS",
+      "sectionLabel": "",
       "title": "~#7b4b1e:Qualitative Results~",
       "content": {
         "columns": 2,
@@ -1486,7 +1486,7 @@
       },
       "id": "13e50afd",
       "paddingBottom": 38,
-      "paddingTop": 17
+      "paddingTop": 13
     },
     {
       "type": "callout",
@@ -1536,7 +1536,7 @@
       "title": "",
       "paddingTop": 3,
       "paddingBottom": 0,
-      "sectionLabel": "RESULTS"
+      "sectionLabel": ""
     },
     {
       "id": "25bd4e70",
