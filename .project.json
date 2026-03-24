@@ -191,12 +191,12 @@
         "links": [
           {
             "label": "Paper",
-            "url": "#",
+            "url": "https://arxiv.org/pdf/2603.22275",
             "icon": "paper"
           },
           {
             "label": "arXiv",
-            "url": "#",
+            "url": "https://arxiv.org/abs/2603.22275",
             "icon": "arxiv"
           },
           {
