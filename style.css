@@ -1418,9 +1418,14 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
   .carousel-btn { width: 32px; height: 32px; }
   .content-bg-box { padding: 16px !important; }
   .hero-teaser { max-width: 100% !important; }
-  .sec { padding-top: calc(var(--sec-pt, var(--section-spacing, 48px)) * .7); padding-bottom: calc(var(--sec-pb, var(--section-spacing, 48px)) * .7); }
+  .sec { padding-top: calc(var(--sec-pt, var(--section-spacing, 48px)) * .55); padding-bottom: calc(var(--sec-pb, var(--section-spacing, 48px)) * .55); }
+  .sec-authors { padding-top: calc(var(--sec-pt, 12px) * .6); padding-bottom: calc(var(--sec-pb, 24px) * .6); }
+  .sec-links { padding-top: calc(var(--sec-pt, 8px) * .6); padding-bottom: calc(var(--sec-pb, 32px) * .6); }
+  .sec-tldr { padding-top: calc(var(--sec-pt, 16px) * .6); padding-bottom: calc(var(--sec-pb, 16px) * .6); }
+  .sec-divider { padding-top: calc(var(--sec-pt, 16px) * .5); padding-bottom: calc(var(--sec-pb, 16px) * .5); }
+  .sec-teaser { padding-bottom: calc(var(--sec-pb, calc(var(--section-spacing, 48px) * .5)) * .55) !important; }
   .section-heading { font-size: clamp(1.1rem,3.5vw,var(--heading-font-size, 1.5rem)) !important; }
-  .section-label-tag { font-size: 0.6rem; letter-spacing: 0.08em; }
+  .section-label-tag { font-size: 0.75rem; letter-spacing: 0.1em; }
   .md-subsection { font-size: 1.1em; }
   .md-subsubsection { font-size: 1em; }
   .sec p, .sec li { line-height: 1.6; }
@@ -1438,6 +1443,10 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
   .hero-subtitle { font-size: 0.85rem !important; line-height: 1.5; }
   .hero-venue { margin-bottom: 10px; }
   .venue-badge { font-size: 0.72em; padding: 4px 10px; letter-spacing: 0.03em; }
+  .sec { padding-top: calc(var(--sec-pt, var(--section-spacing, 48px)) * .4); padding-bottom: calc(var(--sec-pb, var(--section-spacing, 48px)) * .4); }
+  .sec-authors { padding-top: calc(var(--sec-pt, 12px) * .5); padding-bottom: calc(var(--sec-pb, 24px) * .5); }
+  .sec-links { padding-top: calc(var(--sec-pt, 8px) * .5); padding-bottom: calc(var(--sec-pb, 32px) * .5); }
+  .sec-divider { padding-top: calc(var(--sec-pt, 16px) * .4); padding-bottom: calc(var(--sec-pb, 16px) * .4); }
   .sec-authors { padding-left: 12px !important; padding-right: 12px !important; }
   .author-list { flex-direction: column !important; gap: 12px !important; }
   .author-card { flex-direction: row; gap: 6px; }
@@ -1454,7 +1463,7 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
   .nav-top-link { white-space: nowrap; font-size: 11px; }
   .comparison-container { flex-direction: column; gap: 8px; }
   .section-heading { font-size: clamp(1rem, 4vw, 1.3rem) !important; }
-  .section-label-tag { font-size: 0.55rem; letter-spacing: 0.06em; }
+  .section-label-tag { font-size: 0.7rem; letter-spacing: 0.08em; }
   .sec p, .sec li { line-height: 1.55; }
   .bullet-item p { font-size: 0.88em; }
   .divider-dots { letter-spacing: 6px; font-size: 14px; }
@@ -1465,6 +1474,7 @@ body { font-family: Inter, system-ui, -apple-system, sans-serif; color: var(--ap
 @media (max-width: 360px) {
   .preview-outer { font-size: calc(var(--font-size, 16px) * .85) !important; }
   .content-container { padding-left: 8px !important; padding-right: 8px !important; }
+  .sec { padding-top: calc(var(--sec-pt, var(--section-spacing, 48px)) * .3); padding-bottom: calc(var(--sec-pb, var(--section-spacing, 48px)) * .3); }
   .sec-hero { padding: 24px 8px 20px !important; }
   .hero-title { font-size: 1.2rem !important; }
   .hero-subtitle { font-size: 0.8rem !important; }
@@ -1518,4 +1528,5 @@ body { height: auto; overflow-y: auto; overflow-x: hidden; margin: 0; padding: 0
 }
 .preview-section-wrapper { outline: none !important; cursor: default; }
 .preview-section-wrapper.selected, .preview-section-wrapper:hover { outline: none !important; background: transparent !important; }
-.pv-controls, .pv-add-btn, .pv-add-menu, .deploy-backdrop, .deploy-modal, .asset-tray, .spacing-handle { display: none !important; }
+.pv-controls, .pv-add-btn, .pv-add-menu, .deploy-backdrop, .deploy-modal, .asset-tray { display: none !important; }
+[class*="spacing-handle"] { display: none !important; }
