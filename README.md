@@ -84,8 +84,11 @@ model_stats/                       # Latent normalization statistics (included i
 ```
 
 This runs NVS on included demo scenes and generates 3D reconstructions (GLB + COLMAP).
-
 To specify a GPU: `./run_demo.sh da3 <GPU_ID>`
+
+
+_NOTE: For now, 3D reconstruction is supported for DA3 Only. 3D Reconstruction code for VGGT checkpoint will be updated soon!_
+
 
 ## Training
 
