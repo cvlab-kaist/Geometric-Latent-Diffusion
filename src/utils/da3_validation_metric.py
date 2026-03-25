@@ -118,7 +118,6 @@ def get_denoised_features(
     joint_ode=False,
     ref_view_sampling='prefix',
     camera_mode='plucker',
-    ray_pose_mode='c2w',
     is_concat_mode=False,
     pag_scale=None,
     pag_layer_idx=None,
@@ -404,9 +403,9 @@ def get_denoised_features_vae(
 
     # Generate camera embedding at IMAGE resolution
     if use_prope:
-        camera_embedding, scale = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=True)
+        camera_embedding, scale = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, return_scale=True)
     else:
-        camera_embedding = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=False)
+        camera_embedding = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, return_scale=False)
         scale = None
         
     camera_embedding = rearrange(camera_embedding, "b f c h w -> (b f) c h w")
@@ -591,7 +590,6 @@ def decode_into_images(
     batch=None, 
     stat_path=None,
     sample_idx=0,
-    run_pca=False,  
     feat_gt_denorm=None,
 ):
     """
@@ -747,50 +745,6 @@ def decode_into_images(
         if c is not None:
             c = c.to(dtype=decoder_dtype)
         propagated_feats_casted.append((p, c))
-
-    if run_pca:
-        # PCA for propagated features before decoding
-        from utils.pca_visualization import visualize_features_pca
-        import os
-        
-        # Create debug directory for this sample
-        debug_base_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'debug_decoder_input')
-        sample_dir = os.path.join(debug_base_dir, f'sample_{sample_idx:04d}')
-        os.makedirs(sample_dir, exist_ok=True)
-        
-        # Get h, w from the original features (they're rectangular, not square!)
-        # Use feat_latent_denorm to get the original spatial dimensions
-        if len(feat_latent_denorm) > 0:
-            first_level = list(feat_latent_denorm.keys())[0]
-            _, _, h_orig, w_orig = feat_latent_denorm[first_level].shape
-        else:
-            h_orig, w_orig = 37, 67  # Fallback default
-        
-        # Visualize each level's patches before decoding
-        for lvl, (patches, cls) in enumerate(propagated_feats_casted):
-            # patches: (B, V, N, C)
-            B, V, N, C = patches.shape
-            
-            # Use the original h, w
-            h, w = h_orig, w_orig
-            
-            if h * w != N:
-                print(f"Warning: h*w={h*w} != N={N}, skipping PCA for level {lvl}")
-                continue
-            
-            # Reshape (B, V, N, C) -> (B, V, h, w, C) -> (BV, h, w, C) -> (BV, C, h, w)
-            patches_spatial = patches.reshape(B, V, h, w, C)
-            patches_bv = patches_spatial.reshape(B * V, h, w, C)
-            patches_bv_chw = patches_bv.permute(0, 3, 1, 2)  # (BV, C, h, w)
-            
-            # Save in sample folder
-            save_path = os.path.join(sample_dir, f'level{lvl}_decoder_input.png')
-            visualize_features_pca(
-                features=patches_bv_chw,
-                save_path=save_path,
-                level_name=f'Level {lvl} - Decoder Input',
-                n_components=3
-            )
 
     # CHECK IF DECODER HANDLES level0 vs level1, WHICH BETTER?
     # if level == 0:

@@ -125,7 +125,5 @@ dataset:
   ref_view_sampling: random
   normalize_pose: true
   camera_mode: plucker
-  opengl_to_opencv: false
-  ray_pose_mode: legacy_inverse
 
 misc:

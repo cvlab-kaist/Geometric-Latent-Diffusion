@@ -46,7 +46,6 @@ class CUT3RNVSDataset(Dataset):
         image_size: Union[int, List[int], List[Tuple[int, int]]] = 512,
         ref_view_sampling: str = "prefix",
         mode: str = "test",
-        opengl_to_opencv: bool = True,
         seed: int = 42,
     ):
         """
@@ -62,7 +61,6 @@ class CUT3RNVSDataset(Dataset):
         """
         from cut3r_data import DL3DV_Multi, HyperSim_Multi, RE10K_Multi
 
-        self.opengl_to_opencv = opengl_to_opencv
         dataset_name = dataset_name.lower()
         if dataset_name not in self.SUPPORTED_DATASETS:
             raise ValueError(f"Unknown dataset: {dataset_name}. Supported: {self.SUPPORTED_DATASETS}")
@@ -94,7 +92,6 @@ class CUT3RNVSDataset(Dataset):
                 split='train' if mode == 'train' else None,
                 allow_repeat=False,
                 seed=test_seed,
-                opengl_to_opencv=opengl_to_opencv,
             )
         elif dataset_name == 'cut3r_hypersim':
             self.cut3r_dataset = HyperSim_Multi(
@@ -247,7 +244,6 @@ def create_nvs_dataloader(
     batch_size: int = 1,
     num_workers: int = 4,
     mode: str = "test",
-        opengl_to_opencv: bool = True,
     ref_view_sampling: str = "prefix",
     seed: int = 42,
     max_samples: Optional[int] = None,
@@ -287,7 +283,6 @@ def create_nvs_dataloader(
         image_size=image_size,
         ref_view_sampling=ref_view_sampling,
         mode=mode,
-        opengl_to_opencv=opengl_to_opencv,
         seed=seed,
     )
     
@@ -427,10 +422,6 @@ def create_nvs_dataloader_from_config(
         min_interval = eval_cfg.sampling.get('min_interval', 1)
         max_interval = eval_cfg.sampling.get('max_interval', 20)
     
-    # Camera convention: default True (OpenCV c2w for VGGT/new models)
-    # DA3 legacy checkpoints set this to False in their eval config
-
-    opengl_to_opencv = eval_cfg.dataset.get("opengl_to_opencv", True)
     # Create dataloader
     return create_nvs_dataloader(
         dataset_name=dataset_name,
@@ -447,5 +438,4 @@ def create_nvs_dataloader_from_config(
         samples_per_scene=samples_per_scene,
         min_interval=min_interval,
         max_interval=max_interval,
-        opengl_to_opencv=opengl_to_opencv,
     )

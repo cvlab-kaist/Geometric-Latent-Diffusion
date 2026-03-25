@@ -24,6 +24,7 @@ if [[ "$BACKBONE" == "da3" ]]; then CONFIG_PREFIX="DA3"; fi
 if [[ "$BACKBONE" == "vggt" ]]; then CONFIG_PREFIX="VGGT"; fi
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH="src:${PYTHONPATH}"
 
 echo "=== GLD Eval: ${BACKBONE} ${EVAL_MODE} (GPU ${GPU_ID}) ==="
 

@@ -18,6 +18,7 @@ export PROJECT="${PROJECT:-RAE_stage1}"
 
 # PyTorch memory management
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH="src:${PYTHONPATH}"
 
 # Build resume argument
 RESUME_ARG=""

@@ -162,6 +162,7 @@ class RAE_DA3(nn.Module):
             if 'model' in ckpt:
                 decoder_state = {}
                 for k, v in ckpt['model'].items():
+                    new_k = None
                     if k.startswith('decoder.'):
                         decoder_state[k.replace('decoder.', '')] = v
                     elif k.startswith('pred.'):

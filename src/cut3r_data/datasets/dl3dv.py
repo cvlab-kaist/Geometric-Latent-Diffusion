@@ -13,9 +13,8 @@ from cut3r_data.utils.image import imread_cv2
 
 
 class DL3DV_Multi(BaseMultiViewDataset):
-    def __init__(self, *args, split, ROOT, opengl_to_opencv=True, **kwargs):
+    def __init__(self, *args, split, ROOT, **kwargs):
         self.ROOT = ROOT
-        self.opengl_to_opencv = opengl_to_opencv
         self.video = True
         self.min_interval = kwargs.get('min_interval', 1)
         self.max_interval = kwargs.get('max_interval', 20)
@@ -148,11 +147,8 @@ class DL3DV_Multi(BaseMultiViewDataset):
                     cam_file = np.load(npz_path)
                     intrinsics = cam_file["intrinsic"].astype(np.float32)
                     camera_pose = cam_file["pose"].astype(np.float32)
-                    if getattr(self, 'opengl_to_opencv', True):
-                        # DL3DV stores c2w in OpenGL (Y-up, Z-backward).
-                        # Convert to OpenCV (Y-down, Z-forward).
-                        camera_pose[:3, 1] *= -1
-                        camera_pose[:3, 2] *= -1
+                    # Expects OpenCV c2w (X-right, Y-down, Z-forward).
+                    # If your data uses OpenGL convention, convert beforehand.
 
                     depthmap = np.zeros_like(rgb_image)
                     rgb_image, depthmap, intrinsics = self._crop_resize_if_necessary(

@@ -216,7 +216,6 @@ def get_cascade_features(
     noise_tau=0.0,
     prope_image_size=None,
     eval_mode='cascade',
-    ray_pose_mode='c2w',
 ):
     """
     Feature Flow: L1 → L0 via diffusion sampling.
@@ -293,9 +292,9 @@ def get_cascade_features(
     intri_ = rearrange(intrinsic_mat, "b v c1 c2 -> (b v) c1 c2")
     
     if use_prope:
-        camera_embedding, scale = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=True)
+        camera_embedding, scale = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, return_scale=True)
     else:
-        camera_embedding = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=False)
+        camera_embedding = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, return_scale=False)
     
     camera_embedding = rearrange(camera_embedding, "b v c h w -> (b v) c h w")
     
@@ -673,9 +672,6 @@ def main(args):
     if dataset_cfg.name.startswith('cut3r_'):
         import sys
         from datasets.da3_nvs_dataset import create_nvs_dataloader_from_config
-        ogl = model_cfg.get("dataset", {}).get("opengl_to_opencv", True)
-        if "opengl_to_opencv" not in eval_cfg.dataset:
-            OmegaConf.update(eval_cfg, "dataset.opengl_to_opencv", ogl)
         dataloader = create_nvs_dataloader_from_config(
             eval_cfg=eval_cfg,
             difficulty=difficulty,
@@ -719,11 +715,10 @@ def main(args):
     cond_num = sampling_cfg.cond_num
     ref_view_sampling = sampling_cfg.ref_view_sampling
     camera_mode = model_cfg.get('dataset', {}).get('camera_mode', 'plucker')
-    ray_pose_mode = model_cfg.get('dataset', {}).get('ray_pose_mode', 'c2w')
     is_concat_mode = stage2_config.get('params', {}).get('is_concat_mode', False)
     use_prope = stage2_config.get('params', {}).get('use_prope', False)
 
-    print(f"Evaluating... (views={num_views}, cond={cond_num}, camera_mode={camera_mode}, ray_pose={ray_pose_mode}, concat_mode={is_concat_mode})")
+    print(f"Evaluating... (views={num_views}, cond={cond_num}, camera_mode={camera_mode}, concat_mode={is_concat_mode})")
     
     # Read guidance config from model config
     validation_cfg = model_cfg.get('validation', {})
@@ -774,52 +769,6 @@ def main(args):
     if pag_scale is not None:
         print(f"Using PAG guidance: scale={pag_scale}, layer_idx={pag_layer_idx}")
 
-    # ========== Parse Attention Visualization Parameters ==========
-    attention_config = {'enable_attention_vis': False}
-
-    if args.visualize_attention:
-        print("\n" + "="*60)
-        print("ATTENTION VISUALIZATION ENABLED")
-        print("="*60)
-
-        # Parse timesteps
-        if args.attention_timesteps is not None:
-            timesteps = [int(t.strip()) for t in args.attention_timesteps.split(',')]
-        else:
-            # Default: first, middle, last
-            num_steps = sampler_cfg.get('params', {}).get('num_steps', 50)
-            timesteps = [0, num_steps // 2, num_steps - 1]
-
-        # Parse layers
-        if args.attention_layers is not None:
-            layer_ids = [int(l.strip()) for l in args.attention_layers.split(',')]
-        else:
-            # Default: every 2nd layer for both encoder and decoder
-            # Determine total layers from model
-            total_depth = len(model1.blocks) if hasattr(model1, 'blocks') else 34
-            layer_ids = list(range(0, total_depth, 2))
-
-        # Parse query positions
-        query_positions = None
-        if args.attention_query_positions is not None:
-            query_positions = []
-            for pair in args.attention_query_positions.split(':'):
-                h, w = pair.split(',')
-                query_positions.append((int(h.strip()), int(w.strip())))
-
-        attention_config = {
-            'enable_attention_vis': True,
-            'attention_timesteps': timesteps,
-            'attention_layer_ids': layer_ids,
-            'query_view_idx': args.attention_query_view,
-            'query_positions': query_positions,
-        }
-
-        print(f"  Timesteps: {timesteps}")
-        print(f"  Layers: {layer_ids[:5]}{'...' if len(layer_ids) > 5 else ''}")
-        print(f"  Query view: {args.attention_query_view}")
-        print(f"  Query positions: {'default (center+corners)' if query_positions is None else query_positions}")
-        print("="*60 + "\n")
     
     # if level > 0 and not args.feature_only:
     #     print(f"WARNING: Level {level} > 0 requires feature-level validation. Enabling --feature_only automatically.")
@@ -919,77 +868,32 @@ def main(args):
             rae.level = 1
             rae._init_normalization(stat_path=stat_path[1])
 
-            # Use attention-enabled version if visualization is enabled
-            if attention_config['enable_attention_vis']:
-                from utils.attention_integration import get_denoised_features_with_attention
-
-                # Create attention save directory for this sample
-                attn_save_dir = os.path.join(vis_dir, f'attention_sample_{i:04d}')
-                os.makedirs(attn_save_dir, exist_ok=True)
-
-                # Prepare attention config without 'enable_attention_vis' key (already in attention_config)
-                attn_kwargs = {k: v for k, v in attention_config.items() if k != 'enable_attention_vis'}
-                attn_kwargs['attention_save_dir'] = attn_save_dir
-
-                feat[1] = get_denoised_features_with_attention(
-                    rae=rae,
-                    model=model1,
-                    transport=transport,
-                    sampler=sample_fn,
-                    batch=batch,
-                    device=device,
-                    total_view=num_views,
-                    cond_num=cond_num,
-                    use_prope=use_prope,
-                    prope_image_size=(H, W),
-                    cfg_scale=cfg_scale,
-                    use_camera_drop=use_camera_drop_l1,
-                    cfg_uncond_mode=cfg_l1_uncond_mode,
-                    camera_mode=camera_mode,
-                    is_concat_mode=is_concat_mode,
-                    ray_pose_mode=ray_pose_mode,
-                    pag_scale=pag_scale,
-                    pag_layer_idx=pag_layer_idx,
-                    stat_path=stat_path,
-                    # Feature flow params for decoding
-                    cascade_model=cascade_model,
-                    cfg_scale_ar=cfg_scale_auto,
-                    cfg_cascade_uncond_mode=cfg_cascade_uncond_mode,
-                    cascade_noise_tau=args.cascade_noise_tau,
-                    eval_mode=args.eval_mode,
-                    # Attention visualization params
-                    enable_attention_vis=True,
-                    **attn_kwargs,
-                )
-                
-            else:
-                feat[1] = get_denoised_features(
-                    rae=rae,
-                    model=model1,
-                    transport=transport,
-                    sampler=sample_fn,
-                    loader=dataloader,
-                    device=device,
-                    total_view=num_views,
-                    cond_num=cond_num,
-                    val_num_batches=args.max_samples,
-                    use_prope=use_prope,
-                    rank=0,
-                    world_size=1,
-                    prope_image_size=(H, W),
-                    predict_cls=False,
-                    joint_ode=False,
-                    ref_view_sampling=ref_view_sampling,
-                    camera_mode=camera_mode,
-                    is_concat_mode=is_concat_mode,
-                    ray_pose_mode=ray_pose_mode,
-                    pag_scale=pag_scale,
-                    pag_layer_idx=pag_layer_idx,
-                    cfg_scale=cfg_scale,
-                    use_camera_drop=use_camera_drop_l1,  # NEW
-                    cfg_uncond_mode=cfg_l1_uncond_mode,  # NEW
-                    batch=batch,
-                )
+            feat[1] = get_denoised_features(
+                rae=rae,
+                model=model1,
+                transport=transport,
+                sampler=sample_fn,
+                loader=dataloader,
+                device=device,
+                total_view=num_views,
+                cond_num=cond_num,
+                val_num_batches=args.max_samples,
+                use_prope=use_prope,
+                rank=0,
+                world_size=1,
+                prope_image_size=(H, W),
+                predict_cls=False,
+                joint_ode=False,
+                ref_view_sampling=ref_view_sampling,
+                camera_mode=camera_mode,
+                is_concat_mode=is_concat_mode,
+                pag_scale=pag_scale,
+                pag_layer_idx=pag_layer_idx,
+                cfg_scale=cfg_scale,
+                use_camera_drop=use_camera_drop_l1,
+                cfg_uncond_mode=cfg_l1_uncond_mode,
+                batch=batch,
+            )
             feat_denormalized[1] = rae._denormalize(feat[1])  # [latent_norm] → [raw]
             print(f"L1 features: mean={feat[1].mean():.4f}, std={feat[1].std():.4f}")
             # Step 2: L1 → L0 transformation
@@ -1006,7 +910,6 @@ def main(args):
                 total_view=num_views,
                 cond_num=cond_num,
                 camera_mode=camera_mode,
-                ray_pose_mode=ray_pose_mode,
                 use_prope=use_prope,
                 cfg_scale=cfg_scale_auto,
                 use_camera_drop=use_camera_drop_cascade,  # NEW
@@ -1056,7 +959,7 @@ def main(args):
                 ref_view_sampling=ref_view_sampling,
                 camera_mode=camera_mode,
                 is_concat_mode=is_concat_mode,
-                    ray_pose_mode=ray_pose_mode,
+
                 pag_scale=pag_scale,
                 pag_layer_idx=pag_layer_idx,
                 cfg_scale=cfg_scale,
@@ -1073,74 +976,30 @@ def main(args):
             rae.level = 1
             rae._init_normalization(stat_path=stat_path[1])
 
-            # Use attention-enabled version if visualization is enabled
-            if attention_config['enable_attention_vis']:
-                from utils.attention_integration import get_denoised_features_with_attention
-
-                # Create attention save directory for this sample
-                attn_save_dir = os.path.join(vis_dir, f'attention_sample_{i:04d}')
-                os.makedirs(attn_save_dir, exist_ok=True)
-
-                # Prepare attention config without 'enable_attention_vis' key (already in attention_config)
-                attn_kwargs = {k: v for k, v in attention_config.items() if k != 'enable_attention_vis'}
-                attn_kwargs['attention_save_dir'] = attn_save_dir
-
-                feat[1] = get_denoised_features_with_attention(
-                    rae=rae,
-                    model=model1,
-                    transport=transport,
-                    sampler=sample_fn,
-                    batch=batch,
-                    device=device,
-                    total_view=num_views,
-                    cond_num=cond_num,
-                    use_prope=use_prope,
-                    prope_image_size=(H, W),
-                    cfg_scale=cfg_scale,
-                    use_camera_drop=use_camera_drop_l1,
-                    cfg_uncond_mode=cfg_l1_uncond_mode,
-                    camera_mode=camera_mode,
-                    is_concat_mode=is_concat_mode,
-                    ray_pose_mode=ray_pose_mode,
-                    pag_scale=pag_scale,
-                    pag_layer_idx=pag_layer_idx,
-                    stat_path=stat_path,
-                    # Feature flow params for decoding
-                    cascade_model=cascade_model,
-                    cfg_scale_ar=cfg_scale_auto,
-                    cfg_cascade_uncond_mode=cfg_cascade_uncond_mode,
-                    cascade_noise_tau=args.cascade_noise_tau,
-                    eval_mode=args.eval_mode,
-                    # Attention visualization params
-                    enable_attention_vis=True,
-                    **attn_kwargs,
-                )
-            else:
-                feat[1] = get_denoised_features(
-                    rae=rae,
-                    model=model1,
-                    transport=transport,
-                    sampler=sample_fn,
-                    loader=dataloader,
-                    device=device,
-                    total_view=num_views,
-                    cond_num=cond_num,
-                    val_num_batches=args.max_samples,
-                    use_prope=use_prope,
-                    rank=0,
-                    world_size=1,
-                    prope_image_size=(H, W),
-                    predict_cls=False,
-                    joint_ode=False,
-                    ref_view_sampling=ref_view_sampling,
-                    camera_mode=camera_mode,
-                    is_concat_mode=is_concat_mode,
-                    ray_pose_mode=ray_pose_mode,
-                    pag_scale=pag_scale,
-                    pag_layer_idx=pag_layer_idx,
-                    cfg_scale=cfg_scale,
-                    batch=batch,
-                )
+            feat[1] = get_denoised_features(
+                rae=rae,
+                model=model1,
+                transport=transport,
+                sampler=sample_fn,
+                loader=dataloader,
+                device=device,
+                total_view=num_views,
+                cond_num=cond_num,
+                val_num_batches=args.max_samples,
+                use_prope=use_prope,
+                rank=0,
+                world_size=1,
+                prope_image_size=(H, W),
+                predict_cls=False,
+                joint_ode=False,
+                ref_view_sampling=ref_view_sampling,
+                camera_mode=camera_mode,
+                is_concat_mode=is_concat_mode,
+                pag_scale=pag_scale,
+                pag_layer_idx=pag_layer_idx,
+                cfg_scale=cfg_scale,
+                batch=batch,
+            )
             feat_denormalized[1] = rae._denormalize(feat[1])  # [latent_norm] → [raw]
 
         if level >= 2: # level 2,3 need level 2 features
@@ -1167,7 +1026,7 @@ def main(args):
                 ref_view_sampling=ref_view_sampling,
                 camera_mode=camera_mode,
                 is_concat_mode=is_concat_mode,
-                    ray_pose_mode=ray_pose_mode,
+
                 pag_scale=pag_scale,
                 pag_layer_idx=pag_layer_idx,
                 cfg_scale=cfg_scale,
@@ -1198,7 +1057,7 @@ def main(args):
                 ref_view_sampling=ref_view_sampling,
                 camera_mode=camera_mode,
                 is_concat_mode=is_concat_mode,
-                    ray_pose_mode=ray_pose_mode,
+
                 pag_scale=pag_scale,
                 pag_layer_idx=pag_layer_idx,
                 cfg_scale=cfg_scale,
@@ -1265,6 +1124,21 @@ def main(args):
         pred_ray = outputs.get('ray', None)
         pred_ray_conf = outputs.get('ray_conf', None)
 
+        # Recover camera poses from ray head output
+        pred_c2w_list = None
+        pred_K = None
+        if pred_ray is not None:
+            try:
+                from utils.camera_from_ray import recover_poses
+                ray_np = pred_ray.cpu().numpy() if torch.is_tensor(pred_ray) else pred_ray
+                ray_conf_np = pred_ray_conf.cpu().numpy() if pred_ray_conf is not None and torch.is_tensor(pred_ray_conf) else pred_ray_conf
+                pred_c2w_list, pred_K = recover_poses(
+                    ray_np, ray_conf_np, ref_view=0, subsample=4, input_size=(H, W))
+            except Exception as e:
+                print(f"Camera recovery failed: {e}")
+        pred_ray = outputs.get('ray', None)
+        pred_ray_conf = outputs.get('ray_conf', None)
+
         # GT decode: only if all 4 levels available, otherwise skip
         gt_depth = None
         if all(lvl in feat_gt_norm for lvl in range(4)):
@@ -1320,21 +1194,6 @@ def main(args):
         #     sample_idx=i,
         # )
 
-        if args.run_pca:
-            # PCA visualization of features for debugging
-
-            from utils.pca_visualization import visualize_feature_dict_pca
-            
-            pca_dir = os.path.join(vis_dir, f'pca_sample_{i:04d}')
-            visualize_feature_dict_pca(
-                feat_dict=feat_denormalized,
-                save_dir=pca_dir,
-                sample_idx=i,
-                n_components=3,
-                gt_images=batch['image'],  # GT images for row 1
-                feat_gt_dict=feat_gt_denorm,  # GT features for row 3
-            )
-            
         # Save visualization (skip if RGB not available, e.g. VGGT depth-only)
         if img is not None:
             save_visualization(
@@ -1630,8 +1489,6 @@ if __name__ == "__main__":
     parser.add_argument("--difficulty", type=str, default=None,
                         choices=['easy', 'medium', 'hard', 'extreme'],
                         help="Difficulty preset (overrides default_difficulty)")
-    parser.add_argument("--run_pca", type=str, default=False,
-                        help="Run PCA")
     parser.add_argument("--cfg_scale_ar", type=float, default=None,
                         help="CFG scale override for L1→L0 Feature Flow (auto-regressive, defaults to cfg_scale)")
     parser.add_argument("--cfg_scale", type=float, default=None,
@@ -1676,18 +1533,6 @@ if __name__ == "__main__":
     parser.add_argument("--save_gif", action='store_true', help="Save GIF")
     parser.add_argument("--feature_only", action="store_true",
                         help="Use feature-level validation (MSE+CosSim) instead of RGB validation")
-
-    # Attention Visualization
-    parser.add_argument("--visualize_attention", action="store_true",
-                        help="Enable 3D attention map visualization during Level 1 generation")
-    parser.add_argument("--attention_timesteps", type=str, default=None,
-                        help="Comma-separated timestep indices to capture (e.g., '0,25,49'). Default: first,middle,last")
-    parser.add_argument("--attention_layers", type=str, default=None,
-                        help="Comma-separated layer IDs to capture (e.g., '0,2,4,28,30'). Default: every 2nd layer")
-    parser.add_argument("--attention_query_view", type=int, default=3,
-                        help="View index to query from for attention visualization (default: 3, first generated view)")
-    parser.add_argument("--attention_query_positions", type=str, default=None,
-                        help="Comma-separated query positions as 'h,w' pairs (e.g., '16,16:16,20'). Default: center+corners")
 
     args = parser.parse_args()
     main(args)

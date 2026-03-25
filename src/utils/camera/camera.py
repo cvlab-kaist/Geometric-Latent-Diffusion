@@ -25,18 +25,14 @@ from src.utils.camera.position_encoding import freq_encoding
 
 @torch.cuda.amp.autocast(enabled=False)
 def sample_rays(intrinsic, extrinsic, image_h=None, image_w=None,
-                normalize_extrinsic=False, normalize_std=False,
-                ray_pose_mode: str = "c2w"):
+                normalize_extrinsic=False, normalize_std=False):
     """Sample per-pixel rays from camera parameters.
 
     Args:
         intrinsic: [B, 3, 3] camera intrinsic matrix (OpenCV convention: fx, fy, cx, cy)
-        extrinsic: [B, 4, 4] camera pose.
-            - If ray_pose_mode="c2w": treated as camera-to-world (OpenCV).
-            - If ray_pose_mode="legacy_inverse": treated as world-to-camera, inverted internally.
+        extrinsic: [B, 4, 4] camera-to-world (OpenCV c2w).
         image_h, image_w: output ray grid resolution
         normalize_extrinsic: if True, normalize first camera to identity
-        ray_pose_mode: "legacy_inverse" or "c2w" (see module docstring)
 
     Returns:
         rays_o, rays_d: [B, N, 3] ray origins and directions in world frame
@@ -47,12 +43,7 @@ def sample_rays(intrinsic, extrinsic, image_h=None, image_w=None,
     if normalize_extrinsic:
         extrinsic = extrinsic[0:1].inverse() @ extrinsic
 
-    if ray_pose_mode == "legacy_inverse":
-        c2w = torch.inverse(extrinsic)[:, :3, :4]  # [B,3,4] (legacy behavior)
-    elif ray_pose_mode == "c2w":
-        c2w = extrinsic[:, :3, :4]  # [B,3,4] (correct if input is already c2w)
-    else:
-        raise ValueError(f"Unknown ray_pose_mode={ray_pose_mode}. Use 'legacy_inverse' or 'c2w'.")
+    c2w = extrinsic[:, :3, :4]  # [B,3,4]
     x = torch.arange(image_w, device=device).float() - 0.5
     y = torch.arange(image_h, device=device).float() + 0.5
     points = torch.stack(torch.meshgrid(x, y, indexing='ij'), -1)
@@ -76,14 +67,12 @@ def sample_rays(intrinsic, extrinsic, image_h=None, image_w=None,
 def batch_sample_rays(intrinsic, extrinsic, image_h=None, image_w=None,
                       normalize_extrinsic=False, normalize_t=False, nframe=1,
                       normalize_extrinsic_tgt=-1,
-                      ray_pose_mode: str = "c2w"
                       ):
     ''' get rays
     Args:
         intrinsic: [BF, 3, 3],
-        extrinsic: [BF, 4, 4],
+        extrinsic: [BF, 4, 4], camera-to-world (OpenCV c2w)
         h, w: int
-        # normalize: let the first camera R=I
     Returns:
         rays_o, rays_d: [BF, N, 3]
     '''
@@ -95,7 +84,7 @@ def batch_sample_rays(intrinsic, extrinsic, image_h=None, image_w=None,
         new_extrinsic[:, :3, :4] = extrinsic
         new_extrinsic[:, 3, 3] = 1.0
         extrinsic = new_extrinsic
-        
+
     if normalize_extrinsic:
         extri_ = einops.rearrange(extrinsic, "(b f) r c -> b f r c", f=nframe)
         # Normalize relative to reference view: make ref view identity
@@ -103,12 +92,7 @@ def batch_sample_rays(intrinsic, extrinsic, image_h=None, image_w=None,
         ref_c2w_inv = ref_c2w_inv.repeat_interleave(nframe, dim=0)  # [BF,4,4]
         extrinsic = ref_c2w_inv @ extrinsic
 
-    if ray_pose_mode == "legacy_inverse":
-        c2w = torch.inverse(extrinsic)[:, :3, :4].to(device)  # [BF,3,4] (legacy behavior)
-    elif ray_pose_mode == "c2w":
-        c2w = extrinsic[:, :3, :4].to(device)  # [BF,3,4] (correct if input is already c2w)
-    else:
-        raise ValueError(f"Unknown ray_pose_mode={ray_pose_mode}. Use 'legacy_inverse' or 'c2w'.")
+    c2w = extrinsic[:, :3, :4].to(device)  # [BF,3,4]
     x = torch.arange(image_w, device=device).float() - 0.5
     y = torch.arange(image_h, device=device).float() + 0.5
     points = torch.stack(torch.meshgrid(x, y, indexing='ij'), -1)
@@ -200,7 +184,6 @@ def get_camera_embedding(
     h,
     w,
     mode: str = "camray",  # "plucker" | "camray" (default: camray for PRoPE compatibility)
-    ray_pose_mode: str = "c2w",
     normalize_extrinsic: bool = True,
     normalize_t: bool = None,  # Optional override; if None, inferred from mode
     return_scale: bool = False,
@@ -236,7 +219,6 @@ def get_camera_embedding(
         normalize_t=normalize_t,
         normalize_extrinsic_tgt=-1,
         nframe=f,
-        ray_pose_mode=ray_pose_mode,
     )
 
     camera_embedding = embed_rays(

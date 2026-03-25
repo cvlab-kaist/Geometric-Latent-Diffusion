@@ -31,9 +31,13 @@ echo "=========================================="
 
 OUTPUT_DIR="${NVS_DIR}/reconstruction"
 
-CUDA_VISIBLE_DEVICES=${GPU_ID} python scripts/reconstruct_from_nvs.py \
+CUDA_VISIBLE_DEVICES=${GPU_ID} python scripts/reconstruct_npz_scene.py \
     --input "${NPZ_DIR}" \
-    --output "${OUTPUT_DIR}" \
+    --output-root "${OUTPUT_DIR}" \
+    --camera-source pred \
+    --sim3 \
+    --use-pred-ray-conf \
+    --export glb \
     --num-max-points 500000
 
 echo ""

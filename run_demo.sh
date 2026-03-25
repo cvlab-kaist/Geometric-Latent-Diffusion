@@ -11,7 +11,7 @@
 #   ./run_demo.sh vggt                 # VGGT backbone, cascade pipeline
 #   ./run_demo.sh da3 0               # Specify GPU ID
 
-BACKBONE="${1:-da3}"
+BACKBONE="${1:-da3}"    
 GPU_ID="${2:-0}"
 
 if [[ "$BACKBONE" != "da3" && "$BACKBONE" != "vggt" ]]; then
@@ -30,6 +30,7 @@ OUTPUT_DIR="results/demo_${BACKBONE}"
 
 # Environment setup
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH="src:${PYTHONPATH}"
 
 # ============== Step 1: Novel View Synthesis ==============
 echo "=========================================="
@@ -65,9 +66,13 @@ if [[ -z "$NPZ_DIR" ]]; then
     echo "  (NVS step may have failed or not saved raw outputs)"
 else
     echo "Found NPZ files in: ${NPZ_DIR}"
-    python scripts/reconstruct_from_nvs.py \
+    python scripts/reconstruct_npz_scene.py \
         --input "${NPZ_DIR}" \
-        --output "${OUTPUT_DIR}/reconstruction" \
+        --output-root "${OUTPUT_DIR}/reconstruction" \
+        --camera-source pred \
+        --sim3 \
+        --use-pred-ray-conf \
+        --export glb \
         --num-max-points 500000
 
     echo ""

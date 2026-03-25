@@ -60,7 +60,6 @@ def validate_da3_multiview(
     joint_ode=False,  # If True, use Joint ODE inference (ref views start from F_r^ind, not clamped)
     ref_view_sampling='prefix', # sampling method for reference views
     camera_mode='camray', # 'camray' or 'plucker'
-    ray_pose_mode='c2w',
     is_concat_mode=False,  # If True, use concat mode: [cond|noisy] input
     source_level=None,  # Feature-to-Feature Flow: source level for x0 initialization
     source_level_stat_path=None,  # Normalization stat path for source level (must differ from target)
@@ -199,9 +198,9 @@ def validate_da3_multiview(
 
         # Generate camera embedding at IMAGE resolution
         if use_prope:
-            camera_embedding, scale = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=True)
+            camera_embedding, scale = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, return_scale=True)
         else:
-            camera_embedding = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=False)
+            camera_embedding = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, return_scale=False)
             scale = None
             
         camera_embedding = rearrange(camera_embedding, "b f c h w -> (b f) c h w")

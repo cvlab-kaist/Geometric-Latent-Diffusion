@@ -45,6 +45,7 @@ export PROJECT="gld-${BACKBONE}"
 
 # PyTorch memory management - reduces fragmentation for large models
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH="src:${PYTHONPATH}"
 
 echo "=========================================="
 echo "  GLD Training"

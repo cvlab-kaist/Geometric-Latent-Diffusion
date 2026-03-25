@@ -1,27 +1,36 @@
-# Geometric Latent Diffusion
+# Geometric Latent Diffusion: Repurposing Geometric Foundation Models for Multi-view Diffusion
 
-### Repurposing Geometric Foundation Models for Multi-view Diffusion
-
-Wooseok Jang<sup>1</sup>, Seonghu Jeon<sup>1</sup>, Jisang Han<sup>1</sup>, Jinhyeok Choi<sup>1</sup>, Minkyung Kwon<sup>1</sup>, Seungryong Kim<sup>1</sup>, Saining Xie<sup>2</sup>, Sainan Liu<sup>3</sup>
+[Wooseok Jang](https://scholar.google.com/citations?hl=ko&user=7cyLEQ0AAAAJ)<sup>1</sup>, [Seonghu Jeon](https://jeonseonghu.github.io/about-me)<sup>1</sup>, [Jisang Han](https://onground-korea.github.io/)<sup>1</sup>, [Jinhyeok Choi](https://wlsguur.github.io/)<sup>1</sup>, [Minkyung Kwon](https://mkxdxdxd.github.io/)<sup>1</sup>, [Seungryong Kim](https://scholar.google.com/citations?user=cIK1hS8AAAAJ)<sup>1</sup>, [Saining Xie](https://www.sainingxie.com/)<sup>2</sup>, [Sainan Liu](https://www.sainanliu.com/)<sup>3</sup>
 
 <sup>1</sup>KAIST &nbsp; <sup>2</sup>New York University &nbsp; <sup>3</sup>Intel Labs
 
 <p align="center">
   <a href="https://cvlab-kaist.github.io/GLD/"><img src="https://img.shields.io/badge/Project-Page-blue" /></a>
   <a href="https://arxiv.org/abs/2603.22275"><img src="https://img.shields.io/badge/arXiv-2603.22275-red" /></a>
+  <a href="https://huggingface.co/SeonghuJeon/GLD"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Models-yellow" /></a>
 </p>
 
 <p align="center">
   <img src="assets/teaser.png" width="100%" />
 </p>
 
+## News
+
+- **2026-03-25**: Clean up camera conventions and remove unused debugging code. All input cameras are now expected in **OpenCV convention** (X-right, Y-down, Z-forward) + Updated Checkpoint.
+- **2026-03-24**: Initial code and model release.
+
 ## Overview
 
-**GLD** performs multi-view diffusion in the feature space of geometric foundation models (Depth Anything 3 / VGGT), enabling novel view synthesis with zero-shot geometry — trained from scratch without text-to-image pretraining.
+**GLD** performs multi-view diffusion in the feature space of geometric foundation models ([Depth Anything 3](https://github.com/DepthAnything/Depth-Anything-3) / [VGGT](https://github.com/facebookresearch/vggt)), enabling novel view synthesis with zero-shot geometry — trained from scratch without text-to-image pretraining.
 
-- **4.4x faster** training convergence vs VAE-based approaches
+- **4.4× faster** training convergence vs. VAE-based approaches
 - **Zero-shot depth & 3D** from synthesized latents via frozen decoders
 - **State-of-the-art** on RE10K and DL3DV benchmarks
+
+## Requirements
+
+- **GPU**: 48GB+ VRAM recommended (e.g., A6000, A100). Cascade mode loads two DiT models simultaneously.
+- **Python**: 3.10+
 
 ## Installation
 
@@ -76,6 +85,8 @@ model_stats/                       # Latent normalization statistics (included i
 
 This runs NVS on included demo scenes and generates 3D reconstructions (GLB + COLMAP).
 
+To specify a GPU: `./run_demo.sh da3 <GPU_ID>`
+
 ## Training
 
 ### Stage 2: Multi-view Diffusion
@@ -126,19 +137,19 @@ See `configs/training/DA3_stage1_mae.yaml` for training hyperparameters.
 
 ```
 ├── src/
-│   ├── stage1/              # Feature encoder (DA3/VGGT) + decoders (MAE/DPT)
-│   ├── stage2/              # DiT diffusion transformer
-│   ├── utils/               # Metrics, camera, config, validation
-│   ├── datasets/            # Eval dataset adapter
-│   ├── video/               # Training data loaders (CUT3R format)
-│   ├── train_multiview_da3.py  # Stage 2 training
-│   ├── train_stage1_mae.py     # Stage 1 decoder training
+│   ├── stage1/                    # Feature encoder (DA3/VGGT) + decoders (MAE/DPT)
+│   ├── stage2/                    # DiT diffusion transformer
+│   ├── utils/                     # Metrics, camera, config, validation
+│   ├── datasets/                  # Eval dataset adapter
+│   ├── video/                     # Training data loaders (CUT3R format)
+│   ├── train_multiview_da3.py     # Stage 2 training
+│   ├── train_stage1_mae.py        # Stage 1 decoder training
 │   └── eval_gld_metric.py
 ├── configs/
-│   ├── training/            # Model configs (DA3/VGGT × level1/cascade)
-│   └── eval/                # Evaluation configs
-├── demo/                    # Demo scenes (RE10K + DL3DV)
-├── scripts/                 # 3D reconstruction utilities
+│   ├── training/                  # Model configs (DA3/VGGT × level1/cascade)
+│   └── eval/                      # Evaluation configs
+├── demo/                          # Demo scenes (RE10K + DL3DV)
+├── scripts/                       # 3D reconstruction utilities
 ├── run_train.sh
 ├── eval_gld.sh
 ├── run_demo.sh

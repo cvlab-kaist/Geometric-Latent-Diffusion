@@ -67,7 +67,6 @@ def prepare_data(
     random_cond_num: int = 1, 
     return_cls: bool = False, 
     camera_mode: str = "camray",
-    ray_pose_mode: str = "c2w",
     return_scale: bool = False
 ):
     """
@@ -180,9 +179,9 @@ def prepare_data(
     # camera_embedder in DiT will patchify to latent resolution
     # camera_mode: "camray" = direction only (3ch), "plucker" = [d, o×d] (6ch)
     if return_scale:
-        camera_embedding, scale = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=True)
+        camera_embedding, scale = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, return_scale=True)
     else:
-        camera_embedding = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode, ray_pose_mode=ray_pose_mode) 
+        camera_embedding = get_camera_embedding(intri_, extri_, B, V, H, W, mode=camera_mode)
         scale = None
         
     camera_embedding = rearrange(camera_embedding, "b f c h w -> (b f) c h w")
@@ -419,8 +418,7 @@ def main(args):
     camera_mode = multiview_cfg.get("camera_mode", dataset_cfg.get("camera_mode", "camray")).lower()
     if camera_mode not in {"camray", "plucker"}:
         raise ValueError(f"Unknown camera_mode={camera_mode}. Use 'camray' or 'plucker'.")
-    # Training always uses c2w mode (datasets provide OpenCV c2w at load time)
-    ray_pose_mode = "c2w"
+    # All datasets must provide OpenCV c2w at load time
     # Feature-to-Feature Flow Matching: Optional source level conditioning
     # source_level: If set, use features from this level (+ noise) as x0 instead of pure noise
     source_level = training_cfg.get("source_level", None)
@@ -965,13 +963,13 @@ def main(args):
                 x1_cond, x1_all, camera_embedding = prepare_data(
                     rae, image, intrinsic, extrinsic, device, 
                     random_cond_num=batch_cond_num, return_cls=True, 
-                    camera_mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=use_prope
+                    camera_mode=camera_mode, return_scale=use_prope
                 )
             else:
                 x1_cond, x1_all, camera_embedding = prepare_data(
                     rae, image, intrinsic, extrinsic, device, 
                     random_cond_num=batch_cond_num, return_cls=False,
-                    camera_mode=camera_mode, ray_pose_mode=ray_pose_mode, return_scale=use_prope
+                    camera_mode=camera_mode, return_scale=use_prope
                 )
             
             # Ensure cond_num is set to actual sampled value for model_kwargs
@@ -1423,7 +1421,6 @@ def main(args):
                     predict_cls=predict_cls,
                     ref_view_sampling=ref_view_sampling,
                     camera_mode=camera_mode,
-                    ray_pose_mode=ray_pose_mode,
                     rank=rank,
                     world_size=world_size,
                     joint_ode=False,  # Disabled when using concat mode
