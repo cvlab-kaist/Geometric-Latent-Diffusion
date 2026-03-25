@@ -1,0 +1,141 @@
+# DA3 MVDiffusion training config for level -1 (deepest layer)
+# Uses DA3 encoder to extract features at layer 11 (index -1)
+# Image size: 518x518, Patch size: 14, Latent size: 37x37
+
+stage_1:
+  target: stage1.rae_da3.RAE_DA3
+  params:
+    encoder_pretrained_path: 'depth-anything/DA3-Base'
+    encoder_input_size: 504  # DA3 standard input size
+    encoder_type: 'DA3EncoderDirect'
+    decoder_config_path: 'configs/decoder/ViTXL'
+    da3_weights_path: 'pretrained_models/da3/model.safetensors'
+    mae_weight: './pretrained_models/mae_decoder.pt'
+    noise_tau: 0.0
+    reshape_to_2d: true
+    normalization_stat_path: 'model_stats/da3/normalization_stats_level1.pt'
+
+stage_2:
+  target: stage2.models.DDT.DiTwDDTHead
+  params:
+    patch_size: 1
+    in_channels: 1536  # DA3-Base feature dimension
+    hidden_size: [768, 2048]
+    depth: [28, 6]
+    num_heads: [16, 16]
+    mlp_ratio: 4.0
+    use_qknorm: false
+    use_swiglu: true
+    use_rope: false
+    use_rmsnorm: true
+    wo_shift: false
+    use_pos_embed: false
+    use_prope: true
+    architecture_mode: "new"
+    cfg_mode: "new"
+    cam_input_size: 504
+    cam_patch_size: 14
+   # Camera embedder for DA3 resolution
+    level: 1
+    predict_cls: false
+    is_concat_mode: true
+
+transport:
+  params:
+    path_type: 'Linear'
+    prediction: 'velocity'
+    loss_weight: null
+    time_dist_type: 'uniform'
+
+sampler:
+  mode: ODE
+  params:
+    sampling_method: 'euler'
+    num_steps: 50
+    atol: 1.0e-6
+    rtol: 1.0e-3
+    reverse: false
+
+training:
+  camera_drop: 0.1
+  global_seed: 0
+  epochs: 1000000
+  global_batch_size: 7
+  grad_accum_steps: 1
+  ema_decay: 0.9995
+  num_workers: 4
+  log_every: 1
+  base_lr: 5e-5
+  final_lr: 5e-5
+  beta: [0.9, 0.95]
+  wd: 0.0
+  schedule_type: 'constant'
+  # decay_start_epoch: 40
+  # decay_end_epoch: 800
+  clip_grad: 1.0
+
+validation:
+  val_num_batches: 55
+  batch_size: 1
+  validation_mode: 'propagation_0' # propagation, replacement
+  ckpt_every: 5000
+  sample_every: 5000
+  num_views: 8          # 검증 시 총 뷰 개수
+  cond_num: 1           # 검증 시 고정할 컨디션 개수
+  test_baseline: 25    # 검증 시 프레임 간격 (view range)
+  guidance:
+    method: 'cfg'
+    scale: 1.5
+    t_min: 0.0
+    t_max: 1.0
+
+
+
+# =============================================================================
+# UNIFIED DATASET CONFIGURATION
+# Available datasets: re10k, cut3r_combined, cut3r_dl3dv, cut3r_hypersim, cut3r_re10k, dummy
+# =============================================================================
+dataset:
+  # Dataset selection
+  name: cut3r_combined  # Use all 3 CUT3R datasets
+
+  skip_bad_poses: true
+  max_translation_norm: 100
+  max_pose_retries: 200
+  log_bad_pose_every: 100
+  
+  # Equal ratio for all datasets
+  equal_ratio: false
+  mix_ratio:
+    hypersim: 10000
+    tartan: 10000
+    dl3dv: 40000
+    re10k: 40000
+  
+  dl3dv_root: ./data/DL3DV-10K
+  hypersim_root: ./data/hypersim_preprocessed
+  tartanair_root: ./data/tartanair_processed
+  re10k_root: ./data/re10k/processed/train
+  
+  # CUT3R combined dataset paths (Validation)
+  val_dl3dv_root: ./data/DL3DV-Evaluation
+  val_re10k_root: ./data/re10k/processed/test
+  
+  # Alternative: single dataset
+  # name: re10k
+  # train_video_path: data/re10k/training_256
+  # train_pose_path: data/re10k/training_poses
+  # val_video_path: data/re10k/test_256
+  # val_pose_path: data/re10k/test_poses
+  
+  # Resolution (multi-resolution supported, same size per batch)
+  image_size: [[504, 504], [504, 336], [504, 280]]
+  
+  # Multiview settings (integrated into dataset)
+  num_views: 8
+  cond_num: "1-4"  # Dynamic: random per batch, or fixed: 1
+  ref_view_sampling: random  # prefix | random | interpolate
+  normalize_pose: true
+  camera_mode: plucker  # camray | plucker
+
+misc:

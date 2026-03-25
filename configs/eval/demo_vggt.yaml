@@ -1,0 +1,22 @@
+# Demo Configuration for VGGT backbone (square resolution required)
+
+dataset:
+  name: cut3r_dl3dv
+  root: ./demo
+
+sampling:
+  num_views: 8
+  cond_num: 4
+  ref_view_sampling: interpolate
+  samples_per_scene: 1
+  seed: 42
+
+image:
+  size: [504, 504]
+
+difficulties:
+  medium:
+    min_interval: 1
+    max_interval: 5
+
+default_difficulty: medium

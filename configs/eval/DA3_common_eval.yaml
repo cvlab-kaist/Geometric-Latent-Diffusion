@@ -1,0 +1,131 @@
+# Common Base Configuration for GLD Evaluation
+# Contains shared settings for Stage 1 (RAE), Transport, Sampler, and Dataset.
+# Stage 2 (Diffusion DiT) settings are loaded from level-specific configs.
+
+stage_1:
+  target: stage1.rae_da3.RAE_DA3
+  params:
+    encoder_pretrained_path: 'depth-anything/DA3-Base'
+    encoder_input_size: 252  # DA3 standard input size
+    encoder_type: 'DA3EncoderDirect'
+    decoder_config_path: 'configs/decoder/ViTXL'
+    dpt_decoder_path: 'pretrained_models/da3/dpt_decoder.pt'
+    da3_weights_path: 'pretrained_models/da3/model.safetensors'
+    dpt_model_type: 'da3-base'
+    mae_weight: './pretrained_models/mae_decoder.pt'
+    noise_tau: 0.0
+    reshape_to_2d: true
+    normalization_stat_path: 'model_stats/da3/normalization_stats_level0.pt'
+
+# Stage 2 is intentionally empty or minimal here, as it will be overridden
+stage_2:
+  target: stage2.models.DDT.DiTwDDTHead
+  params:
+    # Default params, will be overridden by level-specific configs
+    patch_size: 1
+    in_channels: 1536
+    hidden_size: [768, 2048]
+    depth: [28, 6]
+    num_heads: [16, 16]
+    mlp_ratio: 4.0
+    use_qknorm: false
+    use_swiglu: true
+    use_pos_embed: false
+    use_prope: true
+    cam_input_size: 504
+    cam_patch_size: 14
+    architecture_mode: "new"
+    cfg_mode: "new"
+    level: 0
+    predict_cls: false
+    is_concat_mode: true
+
+transport:
+  params:
+    path_type: 'Linear'
+    prediction: 'velocity'
+    loss_weight: null
+    time_dist_type: 'uniform'
+
+sampler:
+  mode: ODE
+  params:
+    sampling_method: 'euler'
+    num_steps: 50
+    atol: 1.0e-6
+    rtol: 1.0e-3
+    reverse: false
+
+training:
+  # Basic training params needed for config loading compatibility
+  camera_drop: 0.1
+  global_seed: 0
+  epochs: 1000000
+  global_batch_size: 16
+  grad_accum_steps: 1
+  ema_decay: 0.9995
+  num_workers: 4
+  log_every: 1
+  base_lr: 5e-5
+  final_lr: 5e-5
+  beta: [0.9, 0.95]
+  wd: 0.0
+  schedule_type: 'constant'
+  clip_grad: 1.0
+
+validation:
+  val_num_batches: 55
+  batch_size: 1
+  validation_mode: 'propagation'
+  ckpt_every: 5000
+  sample_every: 5000
+  num_views: 8
+  cond_num: 4
+  test_baseline: 25
+  min_interval: 1
+  max_interval: 25
+  seed: 42
+  guidance:
+    method: 'cfg'
+    scale: 1.5
+    t_min: 0.0
+    t_max: 1.0
+
+dataset:
+  # Dataset selection
+  name: cut3r_combined  # Use all 3 CUT3R datasets
+
+  skip_bad_poses: true
+  max_translation_norm: 100
+  max_pose_retries: 200
+  log_bad_pose_every: 100
+  
+  # Equal ratio for all datasets
+  equal_ratio: false
+  mix_ratio:
+    hypersim: 20000
+    dl3dv: 50000
+    re10k: 30000
+  
+  # CUT3R combined dataset paths (Training)
+  dl3dv_root: ./data/DL3DV-10K
+  hypersim_root: ./data/hypersim_preprocessed
+  re10k_root: ./data/re10k/processed/train
+  
+  # CUT3R combined dataset paths (Validation)
+  val_dl3dv_root: ./data/DL3DV-Evaluation
+  val_re10k_root: ./data/re10k/processed/test
+  
+  # Resolution
+  image_size: [[504, 504], [504, 378], [504, 336], [504, 280]]
+  
+  # Multiview settings
+  num_views: 8
+  cond_num: "1-4"
+  ref_view_sampling: random
+  normalize_pose: true
+  camera_mode: plucker
+  opengl_to_opencv: false
+  ray_pose_mode: legacy_inverse
+
+misc:

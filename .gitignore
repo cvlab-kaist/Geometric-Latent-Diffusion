@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pt
+*.pth
+*.safetensors
+results/
+pretrained_models/
+model_stats/
+checkpoints/
+wandb/
+*.log
+.caches/
+tmp/
+*.egg-info/

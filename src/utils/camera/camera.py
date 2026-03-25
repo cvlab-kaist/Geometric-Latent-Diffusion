@@ -1,0 +1,257 @@
+"""
+Camera embedding utilities for multi-view diffusion.
+
+Camera Convention
+=================
+All datasets return **OpenCV c2w** (camera-to-world) matrices:
+  - Coordinate system: X-right, Y-down, Z-forward
+  - Conversion from other conventions (e.g., OpenGL) is handled at data-loading time.
+
+The ``extrinsic`` argument throughout this module is always **c2w** (OpenCV).
+
+PRoPE consumes **w2c** (world-to-camera) matrices. Training code computes
+``w2c = inv(c2w)`` before passing to ``model_kwargs['viewmats']``.
+
+Plücker coordinates: ``[ray_direction, origin × direction]`` (6 channels).
+Translation is normalized by the max absolute component per batch.
+"""
+
+import einops
+import torch
+import torch.nn.functional as F
+
+from src.utils.camera.position_encoding import freq_encoding
+
+
+@torch.cuda.amp.autocast(enabled=False)
+def sample_rays(intrinsic, extrinsic, image_h=None, image_w=None,
+                normalize_extrinsic=False, normalize_std=False,
+                ray_pose_mode: str = "c2w"):
+    """Sample per-pixel rays from camera parameters.
+
+    Args:
+        intrinsic: [B, 3, 3] camera intrinsic matrix (OpenCV convention: fx, fy, cx, cy)
+        extrinsic: [B, 4, 4] camera pose.
+            - If ray_pose_mode="c2w": treated as camera-to-world (OpenCV).
+            - If ray_pose_mode="legacy_inverse": treated as world-to-camera, inverted internally.
+        image_h, image_w: output ray grid resolution
+        normalize_extrinsic: if True, normalize first camera to identity
+        ray_pose_mode: "legacy_inverse" or "c2w" (see module docstring)
+
+    Returns:
+        rays_o, rays_d: [B, N, 3] ray origins and directions in world frame
+    """
+
+    device = intrinsic.device
+    B = intrinsic.shape[0]
+    if normalize_extrinsic:
+        extrinsic = extrinsic[0:1].inverse() @ extrinsic
+
+    if ray_pose_mode == "legacy_inverse":
+        c2w = torch.inverse(extrinsic)[:, :3, :4]  # [B,3,4] (legacy behavior)
+    elif ray_pose_mode == "c2w":
+        c2w = extrinsic[:, :3, :4]  # [B,3,4] (correct if input is already c2w)
+    else:
+        raise ValueError(f"Unknown ray_pose_mode={ray_pose_mode}. Use 'legacy_inverse' or 'c2w'.")
+    x = torch.arange(image_w, device=device).float() - 0.5
+    y = torch.arange(image_h, device=device).float() + 0.5
+    points = torch.stack(torch.meshgrid(x, y, indexing='ij'), -1)
+    points = einops.repeat(points, 'w h c -> b (h w) c', b=B)
+    points = torch.cat([points, torch.ones_like(points)[:, :, 0:1]], dim=-1)
+    directions = points @ intrinsic.inverse().transpose(-1, -2) * 1  # depth is 1
+
+    rays_d = F.normalize(directions @ c2w[:, :3, :3].transpose(-1, -2), dim=-1)  # [B,N,3]
+
+    rays_o = c2w[..., :3, 3]  # [B, 3]
+
+    if normalize_std:
+        rays_o = rays_o / rays_o.std(dim=0, keepdim=True)
+
+    rays_o = rays_o[:, None, :].expand_as(rays_d)  # [B, N, 3]
+
+    return rays_o, rays_d
+
+
+@torch.cuda.amp.autocast(enabled=False)
+def batch_sample_rays(intrinsic, extrinsic, image_h=None, image_w=None,
+                      normalize_extrinsic=False, normalize_t=False, nframe=1,
+                      normalize_extrinsic_tgt=-1,
+                      ray_pose_mode: str = "c2w"
+                      ):
+    ''' get rays
+    Args:
+        intrinsic: [BF, 3, 3],
+        extrinsic: [BF, 4, 4],
+        h, w: int
+        # normalize: let the first camera R=I
+    Returns:
+        rays_o, rays_d: [BF, N, 3]
+    '''
+
+    device = intrinsic.device
+    B = intrinsic.shape[0]
+    if extrinsic.shape[-2] == 3:
+        new_extrinsic = torch.zeros((B, 4, 4), device=extrinsic.device, dtype=extrinsic.dtype)
+        new_extrinsic[:, :3, :4] = extrinsic
+        new_extrinsic[:, 3, 3] = 1.0
+        extrinsic = new_extrinsic
+        
+    if normalize_extrinsic:
+        extri_ = einops.rearrange(extrinsic, "(b f) r c -> b f r c", f=nframe)
+        # Normalize relative to reference view: make ref view identity
+        ref_c2w_inv = extri_[:, normalize_extrinsic_tgt].inverse().to(device)  # [B,4,4]
+        ref_c2w_inv = ref_c2w_inv.repeat_interleave(nframe, dim=0)  # [BF,4,4]
+        extrinsic = ref_c2w_inv @ extrinsic
+
+    if ray_pose_mode == "legacy_inverse":
+        c2w = torch.inverse(extrinsic)[:, :3, :4].to(device)  # [BF,3,4] (legacy behavior)
+    elif ray_pose_mode == "c2w":
+        c2w = extrinsic[:, :3, :4].to(device)  # [BF,3,4] (correct if input is already c2w)
+    else:
+        raise ValueError(f"Unknown ray_pose_mode={ray_pose_mode}. Use 'legacy_inverse' or 'c2w'.")
+    x = torch.arange(image_w, device=device).float() - 0.5
+    y = torch.arange(image_h, device=device).float() + 0.5
+    points = torch.stack(torch.meshgrid(x, y, indexing='ij'), -1)
+    points = einops.repeat(points, 'w h c -> b (h w) c', b=B)
+    points = torch.cat([points, torch.ones_like(points)[:, :, 0:1]], dim=-1)
+    directions = points @ intrinsic.inverse().to(device).transpose(-1, -2) * 1  # depth is 1
+
+    rays_d = F.normalize(directions @ c2w[:, :3, :3].transpose(-1, -2), dim=-1)  # [BF,N,3]
+    rays_o = c2w[..., :3, 3]  # [BF, 3]
+
+    scale = None
+    if normalize_t:
+        rays_o = einops.rearrange(rays_o, "(b f) c -> b f c", f=nframe)
+        # normalize the farthest to 1.0 (direct3d)
+        farthest, _ = rays_o.abs().max(dim=1, keepdim=True)
+        farthest, _ = farthest.max(dim=2, keepdim=True)
+        scale = 1.0 / (farthest + 1e-8)
+        rays_o = rays_o * scale
+        rays_o = einops.rearrange(rays_o, "b f c -> (b f) c")
+
+    rays_o = rays_o[:, None, :].expand_as(rays_d)  # [BF, N, 3]
+
+    return rays_o, rays_d, scale
+
+@torch.cuda.amp.autocast(enabled=False)
+def embed_rays(
+    rays_o,
+    rays_d,
+    nframe,
+    mode: str = "plucker",  # "plucker" | "camray"
+    fourier_embedding: bool = False,
+    fourier_embed_dim: int = 16,
+    camera_longest_side=None,
+):
+    """
+    Embed rays for camera conditioning.
+    
+    Args:
+        rays_o: Ray origins [b,f,n,3] or [(b f),n,3]
+        rays_d: Ray directions [b,f,n,3] or [(b f),n,3]
+        nframe: Number of frames
+        mode: "plucker" for [d, o×d] or "camray" for direction only
+        fourier_embedding: Whether to add Fourier positional encoding
+        fourier_embed_dim: Dimension of Fourier embedding
+        camera_longest_side: For Fourier encoding normalization
+    
+    Returns:
+        cam_emb: Camera embedding [b, f, n, c]
+    """
+    # Accept [b,f,n,3] or [(b f),n,3]
+    if len(rays_d.shape) == 4:  # [b,f,n,3]
+        rays_d = einops.rearrange(rays_d, "b f n c -> (b f) n c")
+        if rays_o is not None:
+            rays_o = einops.rearrange(rays_o, "b f n c -> (b f) n c")
+
+    if mode.lower() == "camray":
+        # CamRay: use direction only (works well with PRoPE for extrinsics)
+        if fourier_embedding:
+            fourier_pe = freq_encoding(
+                rays_d, embed_dim=fourier_embed_dim, camera_longest_side=camera_longest_side
+            )
+            cam_emb = torch.cat([rays_d, fourier_pe], dim=-1)
+        else:
+            cam_emb = rays_d
+
+    elif mode.lower() == "plucker":
+        # Plücker: [d, o × d] (+ optional Fourier)
+        cross_od = torch.cross(rays_o, rays_d, dim=-1)
+        if fourier_embedding:
+            fourier_pe = freq_encoding(
+                cross_od, embed_dim=fourier_embed_dim, camera_longest_side=camera_longest_side
+            )
+            cam_emb = torch.cat([rays_d, cross_od, fourier_pe], dim=-1)
+        else:
+            cam_emb = torch.cat([rays_d, cross_od], dim=-1)
+
+    else:
+        raise ValueError(f"Unknown camera embedding mode: {mode}. Use 'plucker' or 'camray'.")
+
+    cam_emb = einops.rearrange(cam_emb, "(b f) n c -> b f n c", f=nframe)
+    return cam_emb
+
+
+def get_camera_embedding(
+    intrinsic,
+    extrinsic,
+    b,
+    f,
+    h,
+    w,
+    mode: str = "camray",  # "plucker" | "camray" (default: camray for PRoPE compatibility)
+    ray_pose_mode: str = "c2w",
+    normalize_extrinsic: bool = True,
+    normalize_t: bool = None,  # Optional override; if None, inferred from mode
+    return_scale: bool = False,
+):
+    """
+    Get camera embedding from intrinsics and extrinsics (OpenCV c2w).
+
+    Args:
+        intrinsic: [BF, 3, 3] camera intrinsic matrix.
+        extrinsic: [BF, 4, 4] or [BF, 3, 4] camera-to-world (OpenCV).
+        b, f, h, w: batch size, views, image height, image width.
+        mode: "plucker" for [d, o×d] (6ch) or "camray" for direction only (3ch).
+        normalize_extrinsic: Normalize poses relative to reference frame.
+        normalize_t: Normalize translation scale (default: True for plucker).
+        return_scale: Return the normalization scale factor.
+
+    Returns:
+        camera_embedding: [B, F, C, H, W]
+        scale (optional): [B, 1, 1]
+    """
+    # CamRay doesn't use translation, so normalize_t is unnecessary (default False)
+    # Plücker's moment term is scale-sensitive, so normalize_t is beneficial (default True)
+    if normalize_t is None:
+        if return_scale:
+            normalize_t = True
+        else:
+            normalize_t = (mode.lower() == "plucker")
+
+    rays_o, rays_d, scale = batch_sample_rays(
+        intrinsic, extrinsic,
+        image_h=h, image_w=w,
+        normalize_extrinsic=normalize_extrinsic,
+        normalize_t=normalize_t,
+        normalize_extrinsic_tgt=-1,
+        nframe=f,
+        ray_pose_mode=ray_pose_mode,
+    )
+
+    camera_embedding = embed_rays(
+        rays_o if mode.lower() == "plucker" else None,
+        rays_d,
+        nframe=f,
+        mode=mode,
+        fourier_embedding=False,
+        fourier_embed_dim=None,
+        camera_longest_side=None
+    )
+
+    camera_embedding = einops.rearrange(camera_embedding, "b f (h w) c -> b f c h w", h=h, w=w)
+    
+    if return_scale:
+        return camera_embedding, scale
+    
+    return camera_embedding

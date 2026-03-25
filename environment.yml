@@ -1,0 +1,37 @@
+name: gld
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - torch>=2.1.0
+      - torchvision>=0.16.0
+      - xformers
+      - depth-anything-3
+      - vggt @ git+https://github.com/facebookresearch/vggt.git
+      - einops
+      - omegaconf
+      - transformers
+      - safetensors
+      - huggingface-hub
+      - wandb
+      - tqdm
+      - opencv-python
+      - pillow
+      - scipy
+      - scikit-image
+      - lpips
+      - torchdiffeq
+      - evo
+      - timm
+      - accelerate
+      - diffusers
+      - e3nn
+      - pycolmap
+      - plyfile
+      - imageio
+      - addict
+      - av
+      - trimesh

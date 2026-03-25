@@ -1,0 +1,117 @@
+# VGGT MVDiffusion Noise-to-Feature Flow training config
+# Trains diffusion model to GENERATE Level 0 features from noise, conditioned on Level 1 features
+# Uses VGGT encoder for both source (Level 1) and target (Level 0) feature extraction
+
+stage_1:
+  target: stage1.rae_vggt.RAE_VGGT
+  params:
+    encoder_pretrained_path: 'facebook/VGGT-1B'
+    encoder_input_size: 518
+    encoder_type: 'VGGTEncoder'
+    noise_tau: 0.0
+    reshape_to_2d: true
+    normalization_stat_path: 'model_stats/vggt/normalization_stats_level0.pt'
+    special_stat_path: 'model_stats/vggt/special_stats_level0.pt'
+    num_special_tokens: 5
+    mae_weight: null
+
+stage_2:
+  target: stage2.models.DDT.DiTwDDTHead
+  params:
+    patch_size: 1
+    in_channels: 2048  # VGGT feature dimension
+    hidden_size: [768, 2048]
+    depth: [28, 2]
+    num_heads: [16, 16]
+    mlp_ratio: 4.0
+    use_qknorm: false
+    use_swiglu: true
+    use_rope: false
+    use_rmsnorm: true
+    wo_shift: false
+    use_pos_embed: false
+    use_prope: true
+    architecture_mode: "new"
+    cfg_mode: "new"
+    level: 0
+    predict_cls: false
+    is_concat_mode: true
+    source_condition_mode: l1_as_cond
+    num_special_tokens: 5
+    cam_input_size: 504
+    cam_patch_size: 14
+
+transport:
+  params:
+    path_type: 'Linear'
+    prediction: 'velocity'
+    loss_weight: null
+    time_dist_type: 'uniform'
+
+sampler:
+  mode: ODE
+  params:
+    sampling_method: 'euler'
+    num_steps: 50
+    atol: 1.0e-6
+    rtol: 1.0e-3
+    reverse: false
+
+training:
+  camera_drop: 0.1
+  global_seed: 0
+  epochs: 1000000
+  global_batch_size: 8
+  grad_accum_steps: 2
+  ema_decay: 0.9995
+  num_workers: 4
+  log_every: 1
+  base_lr: 5e-5
+  final_lr: 5e-5
+  beta: [0.9, 0.95]
+  wd: 0.0
+  schedule_type: 'constant'
+  clip_grad: 1.0
+
+  # Source Level for Conditioning
+  source_level: 1
+  source_level_stat_path: 'model_stats/vggt/normalization_stats_level1.pt'
+  noise_tau_gt_feat: 0.0
+
+validation:
+  val_num_batches: 5
+  validation_mode: 'propagation'
+  ckpt_every: 5000
+  sample_every: 5000
+  num_views: 8
+  cond_num: 4
+  test_baseline: 25
+  guidance:
+    method: 'cfg'
+    scale: 1.5
+    t_min: 0.0
+    t_max: 1.0
+
+dataset:
+  name: cut3r_combined
+  skip_bad_poses: true
+  max_translation_norm: 100
+  max_pose_retries: 200
+  log_bad_pose_every: 100
+  equal_ratio: false
+  mix_ratio:
+    dl3dv: 50000
+    re10k: 30000
+  dl3dv_root: ./data/DL3DV-10K
+  hypersim_root: ./data/hypersim_preprocessed
+  re10k_root: ./data/re10k/processed/train
+  val_dl3dv_root: ./data/DL3DV-Evaluation
+  val_re10k_root: ./data/re10k/processed/test
+  image_size: [[504, 504], [504, 378], [504, 336], [504, 280]]
+  num_views: 8
+  cond_num: "1-4"
+  ref_view_sampling: random
+  normalize_pose: true
+  camera_mode: plucker
+
+misc:

@@ -1,0 +1,80 @@
+# Stage-1 MAE decoder training on RAE_DA3 multi-level features
+# Trains a GeneralDecoder_Variable with GAN + LPIPS losses
+
+num_views : 4
+n_corres_train: 0
+
+dataset15: DL3DV_Multi(allow_repeat=False, split='train', ROOT="/mnt/data7/wooseok/DL3DV-10K",  resolution=[(504, 504), (504,378), (504, 336), (504, 280)], num_views=${num_views}, n_corres=${n_corres_train})
+
+dataset18: RE10K_Multi(allow_repeat=False, split=None, ROOT="/mnt/data2/wooseok/train", resolution=[(504, 504), (504,378), (504, 336), (504, 280)], num_views=${num_views}, n_corres=${n_corres_train})
+dataset19: RE10K_Multi(allow_repeat=False, split=None, ROOT="/mnt/data2/wooseok/test", resolution=[(504, 504), (504,378), (504, 336), (504, 280)], num_views=${num_views}, n_corres=${n_corres_train})
+
+train_dataset: 25000 @ ${dataset15} + 25000 @ ${dataset18}
+test_dataset: 200 @ ${dataset19}
+
+stage_1:
+  target: stage1.rae_da3.RAE_DA3
+  params:
+    encoder_pretrained_path: 'depth-anything/DA3-Base'
+    encoder_input_size: 504
+    encoder_type: 'DA3EncoderDirect'
+    noise_tau: 0.0
+    reshape_to_2d: true
+
+decoder:
+  config_path: 'configs/decoder/ViTXL'
+  patch_size: 14
+  hidden_size: 6144  # 1536 * 4 (4 DA3 levels concatenated)
+  dropout: 0.0
+
+training:
+  epochs: 100
+  ema_decay: 0.9978
+  batch_size: 1
+  num_workers: 16
+  clip_grad: 0.0
+  log_interval: 100
+  checkpoint_interval: 5000
+  optimizer:
+    lr: 2.0e-4
+    betas: [0.9, 0.95]
+    weight_decay: 0.0
+  scheduler:
+    type: cosine
+    warmup_epochs: 1
+    decay_end_epoch: 50
+    base_lr: 2.0e-4
+    final_lr: 2.0e-5
+
+gan:
+  disc:
+    arch:
+      dino_ckpt_path: 'models/discs/dino_vit_small_patch8_224.pth'
+      ks: 9
+      norm_type: 'bn'
+      using_spec_norm: true
+      recipe: 'S_8'
+    optimizer:
+      lr: 2.0e-4
+      betas: [0.9, 0.95]
+      weight_decay: 0.0
+    scheduler:
+      type: cosine
+      warmup_epochs: 1
+      decay_end_epoch: 16
+      base_lr: 2.0e-4
+      final_lr: 2.0e-5
+    augment:
+      prob: 1.0
+      cutout: 0.0
+  loss:
+    disc_loss: hinge
+    gen_loss: vanilla
+    disc_weight: 0.75
+    perceptual_weight: 1.0
+    recon_weight: 1.0
+    disc_start: 6
+    disc_upd_start: 4
+    lpips_start: 0
+    max_d_weight: 10000.0
+    disc_updates: 1
