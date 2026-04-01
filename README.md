@@ -65,13 +65,13 @@ checkpoints/
   vggt_level1.pt                   # VGGT level-1 diffusion
   vggt_cascade.pt                  # VGGT cascade (level-1 → level-0)
 
-model_stats/                       # Latent normalization statistics (included in repo)
-  da3/normalization_stats_level{0-3}.pt
-  vggt/normalization_stats_level{0-3}.pt
-  vggt/special_stats_level{0-3}.pt
+model_stats/                       # Latent normalization statistics
+  da3/normalization_stats_level{0,1}.pt
+  vggt/normalization_stats_level{0,1}.pt
+  vggt/special_stats_level{0,1}.pt
 ```
 
-> `model_stats/` and `configs/` are already included in the repository.
+> **Note**: `model_stats/` and `configs/` are already included in the Git repository — they are **not** downloaded from HuggingFace. Make sure to `git clone` the repo first, then run `snapshot_download` inside the cloned directory.
 
 ## Quick Demo
 
